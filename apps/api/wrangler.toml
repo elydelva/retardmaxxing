@@ -6,6 +6,9 @@ compatibility_flags = ["nodejs_compat"]
 [observability]
 enabled = true
 
+[vars]
+ENVIRONMENT = "local"
+
 # ====== LOCAL DEV (wrangler dev / miniflare) ======
 [[d1_databases]]
 binding = "DB"
@@ -36,6 +39,9 @@ retry_delay = 30
 [env.staging]
 name = "retardmaxxing-api-staging"
 
+[env.staging.vars]
+ENVIRONMENT = "staging"
+
 [[env.staging.d1_databases]]
 binding = "DB"
 database_name = "retardmaxxing-db-staging"
@@ -64,6 +70,9 @@ retry_delay = 30
 # ====== PRODUCTION ======
 [env.production]
 name = "retardmaxxing-api"
+
+[env.production.vars]
+ENVIRONMENT = "production"
 
 [[env.production.d1_databases]]
 binding = "DB"

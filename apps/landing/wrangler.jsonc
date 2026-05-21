@@ -7,5 +7,22 @@
     "directory": "./dist",
     "binding": "ASSETS",
     "not_found_handling": "404-page"
+  },
+  "vars": {
+    "ENVIRONMENT": "local"
+  },
+  "env": {
+    "staging": {
+      "name": "retardmaxxing-landing-staging",
+      "vars": {
+        "ENVIRONMENT": "staging"
+      }
+    },
+    "production": {
+      "name": "retardmaxxing-landing",
+      "vars": {
+        "ENVIRONMENT": "production"
+      }
+    }
   }
 }

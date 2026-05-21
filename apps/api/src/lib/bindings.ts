@@ -1,6 +1,8 @@
 import type { D1Database, KVNamespace, Queue, R2Bucket } from "@cloudflare/workers-types";
+import type { Env } from "@retardmaxxing/env";
 
 export interface AppBindings {
+  ENVIRONMENT: Env;
   DB: D1Database;
   OBJECTS: R2Bucket;
   CACHE: KVNamespace;

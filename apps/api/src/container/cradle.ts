@@ -1,4 +1,5 @@
 import type { Database } from "@retardmaxxing/database";
+import type { Env } from "@retardmaxxing/env";
 import type { AppBindings } from "../lib/bindings";
 import type { Logger } from "../lib/logger";
 import type { AuthService } from "../modules/auth/auth.service";
@@ -11,6 +12,7 @@ import type { UsersRepo } from "../modules/users/users.repo";
 export interface AppCradle {
   // request-scoped values
   env: AppBindings;
+  environment: Env;
   db: Database;
   logger: Logger;
   userId: string | null;

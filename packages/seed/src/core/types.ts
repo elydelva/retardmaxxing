@@ -1,7 +1,8 @@
 import type { D1Database, KVNamespace, Queue, R2Bucket } from "@cloudflare/workers-types";
 import type { Database } from "@retardmaxxing/database";
+import type { Env } from "@retardmaxxing/env";
 
-export type Env = "local" | "staging" | "production";
+export type { Env };
 
 export interface Logger {
   info: (msg: string) => void;

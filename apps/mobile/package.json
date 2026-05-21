@@ -12,6 +12,7 @@
   "dependencies": {
     "@retardmaxxing/contract": "workspace:*",
     "@retardmaxxing/api": "workspace:*",
+    "@retardmaxxing/env": "workspace:*",
     "@noble/hashes": "^1.5.0",
     "@tanstack/react-query": "catalog:frontend",
     "@trpc/client": "catalog:trpc",

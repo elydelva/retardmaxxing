@@ -8,5 +8,22 @@
   "assets": {
     "not_found_handling": "none",
     "binding": "ASSETS"
+  },
+  "vars": {
+    "ENVIRONMENT": "local"
+  },
+  "env": {
+    "staging": {
+      "name": "retardmaxxing-app-staging",
+      "vars": {
+        "ENVIRONMENT": "staging"
+      }
+    },
+    "production": {
+      "name": "retardmaxxing-app",
+      "vars": {
+        "ENVIRONMENT": "production"
+      }
+    }
   }
 }

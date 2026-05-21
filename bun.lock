@@ -22,6 +22,7 @@
         "@retardmaxxing/contract": "workspace:*",
         "@retardmaxxing/database": "workspace:*",
         "@retardmaxxing/domains": "workspace:*",
+        "@retardmaxxing/env": "workspace:*",
         "@retardmaxxing/notifications": "workspace:*",
         "@trpc/server": "catalog:trpc",
         "awilix": "catalog:cloudflare",
@@ -47,6 +48,7 @@
         "@retardmaxxing/api": "workspace:*",
         "@retardmaxxing/contract": "workspace:*",
         "@retardmaxxing/domains": "workspace:*",
+        "@retardmaxxing/env": "workspace:*",
         "@retardmaxxing/ui": "workspace:*",
         "@tanstack/react-query": "catalog:frontend",
         "@trpc/client": "catalog:trpc",
@@ -106,6 +108,7 @@
         "@react-navigation/native-stack": "catalog:mobile",
         "@retardmaxxing/api": "workspace:*",
         "@retardmaxxing/contract": "workspace:*",
+        "@retardmaxxing/env": "workspace:*",
         "@shopify/restyle": "catalog:mobile",
         "@tanstack/react-query": "catalog:frontend",
         "@trpc/client": "catalog:trpc",
@@ -250,6 +253,15 @@
         "vitest": "catalog:testing",
       },
     },
+    "packages/env": {
+      "name": "@retardmaxxing/env",
+      "version": "0.0.0",
+      "devDependencies": {
+        "@retardmaxxing/config": "workspace:*",
+        "typescript": "catalog:",
+        "vitest": "catalog:testing",
+      },
+    },
     "packages/i18n": {
       "name": "@retardmaxxing/i18n",
       "version": "0.0.0",
@@ -288,6 +300,7 @@
         "@clack/prompts": "catalog:cli",
         "@retardmaxxing/auth": "workspace:*",
         "@retardmaxxing/database": "workspace:*",
+        "@retardmaxxing/env": "workspace:*",
         "commander": "catalog:cli",
         "drizzle-orm": "catalog:cloudflare",
         "p-limit": "catalog:cli",
@@ -1357,6 +1370,8 @@
     "@retardmaxxing/domains": ["@retardmaxxing/domains@workspace:packages/domains"],
 
     "@retardmaxxing/emails": ["@retardmaxxing/emails@workspace:packages/emails"],
+
+    "@retardmaxxing/env": ["@retardmaxxing/env@workspace:packages/env"],
 
     "@retardmaxxing/i18n": ["@retardmaxxing/i18n@workspace:packages/i18n"],
 

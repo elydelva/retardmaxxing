@@ -19,6 +19,7 @@
     "@clack/prompts": "catalog:cli",
     "@retardmaxxing/database": "workspace:*",
     "@retardmaxxing/auth": "workspace:*",
+    "@retardmaxxing/env": "workspace:*",
     "commander": "catalog:cli",
     "drizzle-orm": "catalog:cloudflare",
     "p-limit": "catalog:cli",

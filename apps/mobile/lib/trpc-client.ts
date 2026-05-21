@@ -1,19 +1,21 @@
 import type { AppRouter } from "@retardmaxxing/api/trpc";
+import { API_URLS, parseEnv } from "@retardmaxxing/env";
 import { createTRPCClient, httpBatchLink } from "@trpc/client";
 import Constants from "expo-constants";
 import superjson from "superjson";
 import { buildIntegrityHeaders } from "./integrity";
 
 // Dev: derive Mac LAN IP from Metro hostUri so physical devices can reach
-// `wrangler dev`. Prod: deployed Worker URL.
+// `wrangler dev`. Other envs: API_URLS map.
 const devHost =
   Constants.expoConfig?.hostUri?.split(":")[0] ??
   // @ts-expect-error legacy expoGoConfig fallback
   Constants.expoGoConfig?.debuggerHost?.split(":")[0];
 
+const env = parseEnv(process.env.EXPO_PUBLIC_ENV, "local");
 const apiUrl =
   process.env.EXPO_PUBLIC_API_URL ??
-  (devHost ? `http://${devHost}:8787` : "http://localhost:8787");
+  (env === "local" && devHost ? `http://${devHost}:8787` : API_URLS[env]);
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [

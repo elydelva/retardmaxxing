@@ -1,11 +1,18 @@
 {
   "cli": { "version": ">= 13.0.0", "appVersionSource": "remote" },
   "build": {
-    "development": {
+    "local": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": { "EXPO_PUBLIC_ENV": "local" }
     },
-    "preview": { "distribution": "internal" },
-    "production": { "autoIncrement": true }
+    "staging": {
+      "distribution": "internal",
+      "env": { "EXPO_PUBLIC_ENV": "staging" }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": { "EXPO_PUBLIC_ENV": "production" }
+    }
   }
 }
