@@ -1,0 +1,73 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended",
+    ":semanticCommits",
+    ":dependencyDashboard",
+    ":prHourlyLimitNone",
+    ":prConcurrentLimit10",
+    "group:monorepos",
+    "group:recommended",
+    "schedule:weekly"
+  ],
+  "timezone": "Europe/Paris",
+  "rangeStrategy": "bump",
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 5am on monday"]
+  },
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "matchCurrentVersion": "!/^0/",
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": true,
+      "automergeType": "branch"
+    },
+    {
+      "groupName": "cloudflare",
+      "matchPackagePatterns": ["^@cloudflare/", "^wrangler$", "miniflare"]
+    },
+    {
+      "groupName": "drizzle",
+      "matchPackagePatterns": ["^drizzle-"]
+    },
+    {
+      "groupName": "trpc",
+      "matchPackagePatterns": ["^@trpc/"]
+    },
+    {
+      "groupName": "expo",
+      "matchPackagePatterns": ["^expo", "^@expo/", "react-native"]
+    },
+    {
+      "groupName": "biome",
+      "matchPackagePatterns": ["^@biomejs/"]
+    },
+    {
+      "groupName": "tailwind",
+      "matchPackagePatterns": ["^tailwindcss", "^@tailwindcss/"]
+    },
+    {
+      "matchPackageNames": ["node"],
+      "enabled": false
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "github-actions",
+      "automerge": true
+    }
+  ],
+  "vulnerabilityAlerts": {
+    "labels": ["security"],
+    "automerge": true
+  },
+  "labels": ["dependencies"],
+  "prConcurrentLimit": 10,
+  "rebaseWhen": "behind-base-branch"
+}
