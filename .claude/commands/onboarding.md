@@ -4,278 +4,244 @@ description: Interactive onboarding — rename + cleanup the boilerplate to fit 
 
 # /onboarding — Boilerplate cleanup wizard
 
-You are running the onboarding wizard. The boilerplate ships **everything enabled by default** (mobile, landing, storybook, e2e (Cypress), all CF bindings, all packages, CI workflows, Maestro). Your job is to:
+Boilerplate ships **everything enabled**. Wizard is **subtractive** — user picks what to remove. Default = keep.
 
-1. Ask the user the project name + display.
-2. Ask which **default features they want to remove** (multi-select cleanup).
-3. Apply renaming everywhere.
-4. Delete unwanted directories / config blocks / dependencies.
+Job:
+1. Ask project slug + display name.
+2. Multi-select removals (apps, bindings, OAuth, Stripe, notifications, packages, tooling).
+3. Rename tokens repo-wide.
+4. Delete selected dirs / config blocks / deps.
 5. Bootstrap (`bun install`, `lefthook install`, `moon sync`, typecheck).
-
-The mental model is **subtractive** — the user only confirms what they don't need.
 
 ---
 
 ## Phase 0 — Pre-flight
 
-Verify:
+- Root `package.json` `name` === `"retardmaxxing"`.
+- `node_modules/` absent (else warn).
+- This file exists (you're in it).
 
-- Working dir is the boilerplate root (root `package.json` `name` === `"retardmaxxing"`).
-- `node_modules/` does NOT exist (or warn the user that re-running may break things).
-- This `.claude/commands/onboarding.md` file exists (you're running from it).
-
-If any check fails, ask the user before proceeding.
+Fail → ask user before proceeding.
 
 ---
 
-## Phase 1 — Identity (use `AskUserQuestion`, one call per question)
+## Phase 1 — Identity (one `AskUserQuestion` per Q)
 
-### Q1 — Project slug
-
-```
-question:    "Project slug? (lowercase, kebab-case, used in @<slug>/api etc.)"
-header:      "Slug"
-multiSelect: false
-```
-
-Suggest 2–3 plausible options derived from the parent directory name. Always allow "Other" for free input. Validate against `^[a-z][a-z0-9-]{1,40}$`. If invalid, re-ask.
+### Q1 — Slug
+- Prompt: `"Project slug? (lowercase, kebab-case)"`
+- Header: `Slug`
+- Suggest 2–3 derived from parent dir. Allow Other.
+- Validate `^[a-z][a-z0-9-]{1,40}$`. Re-ask on fail.
 
 ### Q2 — Display name
-
-```
-question:    "Human-readable display name? (titles, app.json, README)"
-header:      "Display name"
-multiSelect: false
-```
-
-Recommend a Title-cased version of the slug. Allow "Other".
+- Prompt: `"Human-readable name?"`
+- Header: `Display name`
+- Recommend Title-case of slug. Allow Other.
 
 ---
 
-## Phase 2 — Cleanup (multi-select removals)
+## Phase 2 — Cleanup (multi-select)
 
-For each question below, the **default mental state is "keep everything"**. The user picks the items they want to **remove**. If they pick nothing, nothing is removed.
+### Q3 — Apps to REMOVE
+(`api`, `app` required — not listed)
+- Mobile (Expo)
+- Landing (Astro)
+- Storybook
+- Cypress e2e (`apps/app/e2e`)
 
-### Q3 — Apps to remove
+### Q4 — CF bindings to REMOVE
+(D1 required — not listed)
+- R2 (object storage)
+- KV (cache)
+- Queues (producer + consumer)
 
-```
-question:    "Which apps do you want to REMOVE? (api + app are required and not listed)"
-header:      "Remove apps"
-multiSelect: true
-```
+### Q5 — OAuth providers to REMOVE
+- Google
+- Apple
 
-Options:
-- `"Mobile (Expo)"`
-- `"Landing (Astro)"`
-- `"Storybook"`
-- `"Cypress e2e (apps/app/e2e)"`
+Both removed → strip `arctic`, stub `signInWithProvider` with `NOT_IMPLEMENTED`.
 
-### Q4 — Cloudflare bindings to remove
+### Q6 — Stripe (billing) — REMOVE?
+- Stripe billing (checkout, subscriptions, portal, webhooks)
 
-```
-question:    "Which CF bindings do you want to REMOVE from wrangler.toml? (D1 is required and not listed)"
-header:      "Remove bindings"
-multiSelect: true
-```
+If removed: `rm -rf packages/billing`, drop `STRIPE_*` bindings + `.dev.vars.example` lines + any `@<slug>/billing` deps + Stripe router.
 
-Options:
-- `"R2 (object storage)"`
-- `"KV (cache)"`
-- `"Queues (producer + consumer)"`
+### Q7 — Notification channels to REMOVE
+- Push (Expo)
+- Email (Resend / `packages/emails`)
+- SMS (Twilio)
 
-### Q5 — OAuth providers to remove
+All three removed → `rm -rf packages/notifications packages/emails` and drop `@<slug>/notifications` deps everywhere.
 
-```
-question:    "Which OAuth providers do you want to REMOVE from packages/auth + apps/api/modules/auth?"
-header:      "Remove OAuth"
-multiSelect: true
-```
+### Q8 — Shared packages to REMOVE
+Required (not listed): `auth`, `config`, `contract`, `database`, `env`, `seed`, `ui`.
+- i18n
+- domains
+- ui-native (mobile-only; auto-removed if Mobile removed)
 
-Options:
-- `"Google"`
-- `"Apple"`
-
-If the user removes both, also strip the `arctic` dependency and replace `signInWithProvider` with a `NOT_IMPLEMENTED` stub.
-
-### Q6 — Shared packages to remove
-
-```
-question:    "Which optional packages do you want to REMOVE?"
-header:      "Remove packages"
-multiSelect: true
-```
-
-Options:
-- `"i18n"`
-- `"emails"`
-- `"domains"`
-
-(`auth`, `config`, `contract`, `database`, `seed`, `ui` are required — not listed.)
-
-### Q7 — Tooling to remove
-
-```
-question:    "Which tooling do you want to REMOVE?"
-header:      "Remove tooling"
-multiSelect: true
-```
-
-Options:
-- `"GitHub Actions CI (.github/workflows/)"`
-- `"Maestro mobile e2e (apps/mobile/.maestro/)"`
-- `"Lefthook git hooks"`
-
-(Removing Mobile in Q3 also removes Maestro automatically — note this if both are picked.)
+### Q9 — Tooling to REMOVE
+- GitHub Actions CI (`.github/workflows/`)
+- Maestro mobile e2e (`apps/mobile/.maestro/`) — auto if Mobile removed
+- Lefthook git hooks
 
 ---
 
 ## Phase 3 — Confirm
 
-Echo a summary table:
+Echo summary table (Slug, Display, Apps kept, Bindings kept, OAuth kept, Stripe kept?, Notifications kept, Packages kept, Tooling kept).
 
-| Field         | Value                                                                  |
-|---------------|------------------------------------------------------------------------|
-| Slug          | `<slug>`                                                               |
-| Display       | `<Display>`                                                            |
-| Apps kept     | api, app, [mobile?, landing?, storybook?] · cypress?                    |
-| Bindings kept | D1, [R2?, KV?, Queues?]                                                |
-| OAuth kept    | [Google?, Apple?] or "none"                                            |
-| Packages kept | auth, config, contract, database, seed, ui, [i18n?, emails?, domains?] |
-| Tooling kept  | Biome, [CI?, Maestro?, Lefthook?]                                      |
-
-Then ask:
-
-```
-question:    "Apply these changes?"
-header:      "Confirm"
-multiSelect: false
-options:     [{ label: "Apply" }, { label: "Cancel" }]
-```
-
-If "Cancel" → stop, no changes.
+Then `AskUserQuestion`: `[Apply, Cancel]`. Cancel → stop.
 
 ---
 
-## Phase 4 — Renaming pass
+## Phase 4 — Rename pass
 
-Run a **single global token replacement** in this exact order. Use `Bash` with `find … -type f … -exec sed -i '' …` (macOS sed). Skip `.git/`, `node_modules/`, `.wrangler/`, `dist/`, `.expo/`, `.moon/cache/`, AND this onboarding file (`.claude/commands/onboarding.md`).
+Single global replace, **in order**. Use `find … -type f … -exec sed -i '' …`. Skip: `.git/`, `node_modules/`, `.wrangler/`, `dist/`, `.expo/`, `.moon/cache/`, `.claude/commands/onboarding.md`.
 
-1. `@retardmaxxing/`            → `@<slug>/`
-2. `retardmaxxing-`             → `<slug>-`     (catches wrangler resource names: `retardmaxxing-api`, `retardmaxxing-db`, `retardmaxxing-objects`, `retardmaxxing-jobs`)
-3. `retardmaxxing.com`          → `<slug>.com`
-4. `com.retardmaxxing.app`      → `com.<slug>.app`
-5. `retardmaxxing.`             → `<slug>.`     (only meaningful in `apps/mobile/lib/secure-store.ts` `KEY_*` constants; do steps 3+4 first or they'd be munged)
-6. bare `retardmaxxing`         → `<slug>`      (root pkg name, Astro page title, mobile app.json `name`/`slug`/`scheme`, Maestro `appId`, API `/` JSON response)
-7. `Retardmaxxing`              → `<DisplayName>`  (README headings, CLAUDE.md, layout.tsx metadata.title, i18n `app.title`)
+1. `@retardmaxxing/`      → `@<slug>/`
+2. `retardmaxxing-`       → `<slug>-`        (wrangler resource names: `-api`, `-db`, `-objects`, `-jobs`)
+3. `retardmaxxing.com`    → `<slug>.com`
+4. `com.retardmaxxing.app`→ `com.<slug>.app`
+5. `retardmaxxing.`       → `<slug>.`        (only `apps/mobile/lib/secure-store.ts` `KEY_*`; do 3+4 first)
+6. `retardmaxxing`        → `<slug>`         (root pkg, Astro title, mobile `app.json`, Maestro `appId`, API `/` JSON)
+7. `Retardmaxxing`        → `<DisplayName>`  (READMEs, CLAUDE.md, layout metadata, i18n `app.title`)
 
-**Sanity check** after all 7 passes:
-
+Sanity:
 ```bash
 rg -l "retardmaxxing" . --glob '!node_modules' --glob '!.git' --glob '!.claude/commands/onboarding.md'
 ```
-
-Should print nothing. If anything remains, fix it manually before continuing.
+Empty output expected. Fix leftovers manually.
 
 ---
 
 ## Phase 5 — Apply removals
 
-For each removal selected in Phase 2, run the actions below in this order (later steps depend on earlier deletions).
+Run in this order (later steps depend on earlier deletes).
 
-### If "Mobile" removed
+### Mobile removed
 - `rm -rf apps/mobile`
-- Edit `.moon/workspace.yml`: remove `mobile:` line.
-- Edit root `tsconfig.json`: remove `apps/mobile` reference if present.
-- Edit `.github/workflows/e2e.yml`: remove the `maestro` job entirely (or delete the file if Cypress also removed).
-- Maestro is auto-removed since it lives inside `apps/mobile/.maestro`.
+- `.moon/workspace.yml`: drop `mobile:` line
+- Root `tsconfig.json`: drop `./apps/mobile` ref
+- `.github/workflows/e2e.yml`: drop `maestro` job (or delete file if Cypress also gone)
+- Auto-removes Maestro + flags `ui-native` for removal
 
-### If "Landing" removed
+### Landing removed
 - `rm -rf apps/landing`
-- Edit `.moon/workspace.yml`: remove `landing:` line.
-- Edit root `tsconfig.json`: remove `./apps/landing` reference.
-- Edit `.github/workflows/deploy.yml`: remove `deploy-landing` job.
+- `.moon/workspace.yml`: drop `landing:`
+- Root `tsconfig.json`: drop ref
+- `.github/workflows/deploy.yml`: drop `deploy-landing` job
 
-### If "Storybook" removed
+### Storybook removed
 - `rm -rf apps/storybook`
-- Edit `.moon/workspace.yml`: remove `storybook:` line.
-- Edit root `tsconfig.json`: remove the reference.
+- `.moon/workspace.yml`: drop `storybook:`
+- Root `tsconfig.json`: drop ref
 
-### If "Cypress e2e" removed
+### Cypress removed
 - `rm -rf apps/app/e2e apps/app/cypress.config.ts`
-- Edit root `tsconfig.json`: remove `./apps/app/e2e` reference.
-- Edit `apps/app/tsconfig.json`: drop `"e2e"` and `"cypress.config.ts"` from `exclude`.
-- Edit `apps/app/package.json`: remove `e2e` + `e2e:open` scripts and the `cypress` devDep.
-- Edit `.github/workflows/e2e.yml`: remove the `cypress` job (or delete the file if Maestro also removed).
-- Remove `cypress` and `wait-on` from root `package.json` `catalogs.testing`.
+- Root `tsconfig.json`: drop `./apps/app/e2e`
+- `apps/app/tsconfig.json`: drop `"e2e"`, `"cypress.config.ts"` from `exclude`
+- `apps/app/package.json`: drop `e2e`, `e2e:open` scripts + `cypress` devDep
+- `.github/workflows/e2e.yml`: drop `cypress` job (or delete file)
+- Root `package.json` `catalogs.testing`: drop `cypress`, `wait-on`
 
-### If "R2" removed
-- Edit `apps/api/wrangler.toml`: delete every `[[r2_buckets]]` and `[[env.staging.r2_buckets]]` and `[[env.production.r2_buckets]]` block.
-- Edit `apps/api/src/lib/bindings.ts`: remove `OBJECTS: R2Bucket;` and the import.
+### R2 removed
+- `apps/api/wrangler.toml`: drop every `[[r2_buckets]]` block (top + envs)
+- `apps/api/src/lib/bindings.ts`: drop `OBJECTS: R2Bucket;` + import
 
-### If "KV" removed
-- Edit `apps/api/wrangler.toml`: delete every `[[kv_namespaces]]` block (top-level + each env).
-- Edit `apps/api/src/lib/bindings.ts`: remove `CACHE: KVNamespace;`.
+### KV removed
+- `apps/api/wrangler.toml`: drop every `[[kv_namespaces]]` block
+- `apps/api/src/lib/bindings.ts`: drop `CACHE: KVNamespace;`
 
-### If "Queues" removed
-- Edit `apps/api/wrangler.toml`: delete every `[[queues.producers]]` and `[[queues.consumers]]` block (top-level + each env).
-- Edit `apps/api/src/lib/bindings.ts`: remove `JOBS: Queue;`.
+### Queues removed
+- `apps/api/wrangler.toml`: drop every `[[queues.producers]]` + `[[queues.consumers]]`
+- `apps/api/src/lib/bindings.ts`: drop `JOBS: Queue;`
 
-### If "Google OAuth" removed
-- Edit `packages/auth/src/providers.ts`: remove `Google` import + `googleClient` function + `GOOGLE_*` fields from `ProviderEnv`.
-- Edit `apps/api/src/modules/auth/router.ts`: remove the `if (input.provider === "google")` branch.
-- Edit `apps/api/src/lib/bindings.ts`: remove `GOOGLE_*` env fields.
-- Edit `apps/api/.dev.vars.example`: remove `GOOGLE_*` lines.
-- Edit `packages/contract/src/auth.ts`: remove `"google"` from `ProviderSchema` enum.
+### Google OAuth removed
+- `packages/auth/src/providers.ts`: drop `Google` import + `googleClient` + `GOOGLE_*` from `ProviderEnv`
+- `apps/api/src/modules/auth/router.ts`: drop `provider === "google"` branch
+- `apps/api/src/lib/bindings.ts`: drop `GOOGLE_*`
+- `apps/api/.dev.vars.example`: drop `GOOGLE_*`
+- `packages/contract/src/auth.ts`: drop `"google"` from `ProviderSchema`
 
-### If "Apple OAuth" removed
-- Same as Google but for Apple (`appleClient`, `APPLE_*`, `Apple` import).
+### Apple OAuth removed
+Same as Google for `appleClient`, `APPLE_*`, `Apple` import.
 
-### If both OAuth providers removed
-- Replace the whole `signInWithProvider` mutation in `apps/api/src/modules/auth/router.ts` with a stub that throws `TRPCError({ code: "NOT_IMPLEMENTED" })`.
-- Remove `arctic` from `packages/auth/package.json` and root `catalogs.auth`.
-- Delete `packages/auth/src/providers.ts`.
+### Both OAuth removed
+- Replace `signInWithProvider` with `throw new TRPCError({ code: "NOT_IMPLEMENTED" })`
+- `packages/auth/package.json` + root `catalogs.auth`: drop `arctic`
+- `rm packages/auth/src/providers.ts`
 
-### If "i18n" / "emails" / "domains" removed
+### Stripe removed
+- `rm -rf packages/billing`
+- `apps/api/src/lib/bindings.ts`: drop `STRIPE_*`
+- `apps/api/.dev.vars.example`: drop `STRIPE_*`
+- `apps/api/src/modules/`: drop billing router + DI registration (look for `billing` cradle key)
+- `.moon/workspace.yml`: drop `billing:` if listed
+- Grep for `@<slug>/billing` deps, remove
+
+### Push (Expo) removed
+- `apps/api/src/lib/bindings.ts`: drop `EXPO_ACCESS_TOKEN`
+- `apps/api/.dev.vars.example`: drop `EXPO_*`
+- `packages/notifications/`: drop Expo push channel (keep package if email/sms kept)
+
+### Email (Resend) removed
+- `rm -rf packages/emails`
+- `apps/api/src/lib/bindings.ts`: drop `RESEND_API_KEY`, `EMAIL_FROM`
+- `apps/api/.dev.vars.example`: drop `RESEND_*`, `EMAIL_FROM`
+- Grep for `@<slug>/emails` deps, remove
+- `.moon/workspace.yml`: drop `emails:`
+
+### SMS (Twilio) removed
+- `apps/api/src/lib/bindings.ts`: drop `TWILIO_*`
+- `apps/api/.dev.vars.example`: drop `TWILIO_*`
+- `packages/notifications/`: drop Twilio channel
+
+### All notifications removed
+- `rm -rf packages/notifications`
+- `.moon/workspace.yml`: drop `notifications:`
+- Grep for `@<slug>/notifications` deps, remove
+
+### i18n / domains removed
 - `rm -rf packages/<name>`
-- Edit `.moon/workspace.yml` + root `tsconfig.json`: remove references.
-- Grep for `@<slug>/<name>` and remove from any `dependencies` blocks.
+- `.moon/workspace.yml` + root `tsconfig.json`: drop refs
+- Grep for `@<slug>/<name>` deps, remove
 
-### If "GitHub Actions CI" removed
+### ui-native removed (mobile gone OR explicit)
+- `rm -rf packages/ui-native`
+- `.moon/workspace.yml`: drop if listed
+- Grep for `@<slug>/ui-native` deps
+
+### CI removed
 - `rm -rf .github`
 
-### If "Maestro" removed (and mobile kept)
+### Maestro removed (mobile kept)
 - `rm -rf apps/mobile/.maestro`
-- Edit `.github/workflows/e2e.yml`: remove the `maestro` job (or delete the file if also no Cypress).
+- `.github/workflows/e2e.yml`: drop `maestro` job (or delete file if no Cypress)
 
-### If "Lefthook" removed
+### Lefthook removed
 - `rm -f lefthook.yml`
-- Remove `lefthook` from root `package.json` devDependencies.
-- Remove the `prepare` script from root `package.json`.
+- Root `package.json`: drop `lefthook` devDep + `prepare` script
 
 ---
 
 ## Phase 6 — Bootstrap
-
-Run sequentially — each must succeed:
 
 ```bash
 bun install
 [ -f lefthook.yml ] && bunx lefthook install
 bunx moon sync projects
 bun run --cwd packages/database db:generate || true   # empty schema OK
-bun run lint || true                                   # warn, don't fail
+bun run lint || true                                   # warn only
 bun run typecheck                                       # MUST pass
 ```
 
-If `bun install` fails on `vinext` or Expo SDK versions, advise pinning specific versions in catalogs and re-run.
+`bun install` fails on `vinext` / Expo → pin specific versions in catalogs, re-run.
 
-If typecheck fails after cleanup, **don't loop** — print the errors, ask the user whether to fix interactively or proceed and address later.
+Typecheck fails → **don't loop**. Print errors, ask user: fix interactively or proceed.
 
 ---
 
 ## Phase 7 — Final report
-
-Print:
 
 ```
 ✅ <slug> ready
@@ -284,11 +250,13 @@ Removed:     [list]
 Kept apps:   api, app, [mobile, landing, storybook] · cypress?
 Bindings:    D1, [R2, KV, Queues]
 OAuth:       [Google, Apple, none]
-Packages:    auth, config, contract, database, seed, ui, [i18n, emails, domains]
+Stripe:      [kept, removed]
+Notify:      [push, email, sms, none]
+Packages:    auth, config, contract, database, env, seed, ui, [billing, domains, emails, i18n, notifications, ui-native]
 Tooling:     Biome, [CI, Maestro, Lefthook]
 
 Next steps:
-  1. cp apps/api/.dev.vars.example apps/api/.dev.vars  (fill OAuth secrets if kept)
+  1. cp apps/api/.dev.vars.example apps/api/.dev.vars  (fill secrets)
   2. bunx wrangler login
   3. Provision D1/[KV/R2/Queues] — see README "Cloudflare provisioning"
   4. cd apps/api && bunx wrangler dev
@@ -297,17 +265,17 @@ Next steps:
 
 Optional:
   - git init && git add . && git commit -m "init"
-  - rm .claude/commands/onboarding.md  (this wizard — single-use)
+  - rm .claude/commands/onboarding.md  (single-use)
 ```
 
 ---
 
 ## Constraints
 
-- **Use `AskUserQuestion`** — never roll your own input loop.
-- **One question per call** (don't bundle Q1–Q7).
-- **`multiSelect: true` is mandatory** for Q3–Q7 (cleanup).
-- **Validate the slug** against `^[a-z][a-z0-9-]{1,40}$`. Re-ask on invalid free-text.
-- **Don't commit anything** — let the user run `git init` themselves.
-- **Default = keep everything.** The user removes only what they explicitly pick.
-- **Idempotency is not required** — onboarding is single-use. Phase 0 warns if re-run.
+- `AskUserQuestion` only — no custom input loops.
+- One question per call.
+- `multiSelect: true` for Q3–Q9.
+- Slug regex: `^[a-z][a-z0-9-]{1,40}$`. Re-ask on invalid.
+- Don't commit — user runs `git init`.
+- Default = keep. Remove only what user picks.
+- Single-use. Phase 0 warns on re-run.
