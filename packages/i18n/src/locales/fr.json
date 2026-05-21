@@ -1,0 +1,4 @@
+{
+  "app": { "title": "Retardmaxxing" },
+  "auth": { "signIn": "Se connecter", "signOut": "Se déconnecter" }
+}

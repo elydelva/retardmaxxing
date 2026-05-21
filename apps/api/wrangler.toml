@@ -1,0 +1,91 @@
+name = "retardmaxxing-api"
+main = "src/index.ts"
+compatibility_date = "2025-10-01"
+compatibility_flags = ["nodejs_compat"]
+
+[observability]
+enabled = true
+
+# ====== LOCAL DEV (wrangler dev / miniflare) ======
+[[d1_databases]]
+binding = "DB"
+database_name = "retardmaxxing-db"
+database_id = "TBD"
+migrations_dir = "../../packages/database/migrations"
+
+[[r2_buckets]]
+binding = "OBJECTS"
+bucket_name = "retardmaxxing-objects"
+
+[[kv_namespaces]]
+binding = "CACHE"
+id = "TBD"
+
+[[queues.producers]]
+binding = "JOBS"
+queue = "retardmaxxing-jobs"
+
+[[queues.consumers]]
+queue = "retardmaxxing-jobs"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
+retry_delay = 30
+
+# ====== STAGING ======
+[env.staging]
+name = "retardmaxxing-api-staging"
+
+[[env.staging.d1_databases]]
+binding = "DB"
+database_name = "retardmaxxing-db-staging"
+database_id = "TBD"
+migrations_dir = "../../packages/database/migrations"
+
+[[env.staging.r2_buckets]]
+binding = "OBJECTS"
+bucket_name = "retardmaxxing-objects-staging"
+
+[[env.staging.kv_namespaces]]
+binding = "CACHE"
+id = "TBD"
+
+[[env.staging.queues.producers]]
+binding = "JOBS"
+queue = "retardmaxxing-jobs-staging"
+
+[[env.staging.queues.consumers]]
+queue = "retardmaxxing-jobs-staging"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
+retry_delay = 30
+
+# ====== PRODUCTION ======
+[env.production]
+name = "retardmaxxing-api"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "retardmaxxing-db"
+database_id = "TBD"
+migrations_dir = "../../packages/database/migrations"
+
+[[env.production.r2_buckets]]
+binding = "OBJECTS"
+bucket_name = "retardmaxxing-objects"
+
+[[env.production.kv_namespaces]]
+binding = "CACHE"
+id = "TBD"
+
+[[env.production.queues.producers]]
+binding = "JOBS"
+queue = "retardmaxxing-jobs"
+
+[[env.production.queues.consumers]]
+queue = "retardmaxxing-jobs"
+max_batch_size = 10
+max_batch_timeout = 30
+max_retries = 3
+retry_delay = 30

@@ -1,0 +1,20 @@
+import type { DrizzleD1Database } from "drizzle-orm/d1";
+import type * as schema from "./schema";
+
+export type Database = DrizzleD1Database<typeof schema>;
+export type User = typeof schema.users.$inferSelect;
+export type NewUser = typeof schema.users.$inferInsert;
+export type Identity = typeof schema.identities.$inferSelect;
+export type Session = typeof schema.sessions.$inferSelect;
+export type Plan = typeof schema.plans.$inferSelect;
+export type Subscription = typeof schema.subscriptions.$inferSelect;
+export type NewSubscription = typeof schema.subscriptions.$inferInsert;
+export type Product = typeof schema.products.$inferSelect;
+export type NewProduct = typeof schema.products.$inferInsert;
+export type Payment = typeof schema.payments.$inferSelect;
+export type NewPayment = typeof schema.payments.$inferInsert;
+export type StripeWebhookEvent = typeof schema.stripeWebhookEvents.$inferSelect;
+export type PushToken = typeof schema.pushTokens.$inferSelect;
+export type NewPushToken = typeof schema.pushTokens.$inferInsert;
+export type NotificationPreferences = typeof schema.notificationPreferences.$inferSelect;
+export type NotificationLog = typeof schema.notificationLog.$inferSelect;

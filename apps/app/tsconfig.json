@@ -1,0 +1,20 @@
+{
+  "extends": "@retardmaxxing/config/tsconfig.web.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "types": ["vite/client", "node"],
+    "plugins": [{ "name": "next" }]
+  },
+  "include": [
+    "next-env.d.ts",
+    "src/**/*",
+    "app/**/*",
+    "worker/**/*",
+    "tests/**/*",
+    ".next/types/**/*"
+  ],
+  "exclude": ["node_modules", ".next", "e2e", "cypress.config.ts"]
+}

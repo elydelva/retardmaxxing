@@ -1,0 +1,19 @@
+{
+  "files": [],
+  "references": [
+    { "path": "./packages/config" },
+    { "path": "./packages/contract" },
+    { "path": "./packages/database" },
+    { "path": "./packages/ui" },
+    { "path": "./packages/auth" },
+    { "path": "./packages/i18n" },
+    { "path": "./packages/emails" },
+    { "path": "./packages/domains" },
+    { "path": "./packages/seed" },
+    { "path": "./apps/api" },
+    { "path": "./apps/app" },
+    { "path": "./apps/landing" },
+    { "path": "./apps/storybook" },
+    { "path": "./apps/app/e2e" }
+  ]
+}

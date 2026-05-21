@@ -1,0 +1,4 @@
+{
+  "extends": "@retardmaxxing/config/tsconfig.workers.json",
+  "include": ["src/**/*", "drizzle.config.ts"]
+}

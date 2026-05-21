@@ -1,0 +1,19 @@
+{
+  "name": "@retardmaxxing/i18n",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./locales/*": "./src/locales/*"
+  },
+  "scripts": { "typecheck": "tsc --noEmit" },
+  "dependencies": {
+    "i18next": "catalog:validation",
+    "react-i18next": "catalog:validation"
+  },
+  "devDependencies": {
+    "@retardmaxxing/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

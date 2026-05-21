@@ -1,0 +1,28 @@
+{
+  "name": "@retardmaxxing/storybook",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "storybook dev -p 6006",
+    "build": "storybook build",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@retardmaxxing/ui": "workspace:*",
+    "react": "catalog:frontend",
+    "react-dom": "catalog:frontend",
+    "tailwindcss": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@retardmaxxing/config": "workspace:*",
+    "@storybook/addon-essentials": "^8.4.0",
+    "@storybook/react-vite": "^8.4.0",
+    "@tailwindcss/vite": "catalog:frontend",
+    "@types/react": "catalog:frontend",
+    "@types/react-dom": "catalog:frontend",
+    "storybook": "^8.4.0",
+    "typescript": "catalog:",
+    "vite": "catalog:frontend"
+  }
+}

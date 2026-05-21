@@ -1,0 +1,16 @@
+{
+  "name": "@retardmaxxing/config",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./tsconfig.workers.json": "./tsconfig.workers.json",
+    "./tsconfig.web.json": "./tsconfig.web.json",
+    "./tsconfig.node.json": "./tsconfig.node.json",
+    "./tsconfig.native.json": "./tsconfig.native.json",
+    "./vitest.base": "./vitest.base.ts"
+  },
+  "devDependencies": {
+    "vitest": "catalog:testing"
+  }
+}

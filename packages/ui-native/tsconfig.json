@@ -1,0 +1,4 @@
+{
+  "extends": "@retardmaxxing/config/tsconfig.native.json",
+  "include": ["src/**/*"]
+}

@@ -1,0 +1,6 @@
+appId: com.retardmaxxing.app
+---
+- launchApp
+- tapOn: "Billing"
+- assertVisible: "Subscriptions"
+- tapOn: "Manage billing"

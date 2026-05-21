@@ -1,0 +1,53 @@
+{
+  "name": "@retardmaxxing/app",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --port 3001",
+    "build": "vite build",
+    "preview": "vite preview",
+    "deploy": "vite build && wrangler deploy",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "e2e": "cypress run",
+    "e2e:open": "cypress open"
+  },
+  "dependencies": {
+    "@retardmaxxing/api": "workspace:*",
+    "@retardmaxxing/contract": "workspace:*",
+    "@retardmaxxing/domains": "workspace:*",
+    "@retardmaxxing/ui": "workspace:*",
+    "@tanstack/react-query": "catalog:frontend",
+    "@trpc/client": "catalog:trpc",
+    "@trpc/tanstack-react-query": "catalog:trpc",
+    "clsx": "catalog:frontend",
+    "next": "^16.0.0",
+    "react": "catalog:frontend",
+    "react-dom": "catalog:frontend",
+    "tailwindcss": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "catalog:cloudflare",
+    "@retardmaxxing/config": "workspace:*",
+    "@testing-library/jest-dom": "catalog:testing",
+    "@testing-library/react": "catalog:testing",
+    "@testing-library/user-event": "catalog:testing",
+    "cypress": "catalog:testing",
+    "happy-dom": "catalog:testing",
+    "msw": "catalog:testing",
+    "vitest": "catalog:testing",
+    "@tailwindcss/postcss": "catalog:frontend",
+    "@tailwindcss/vite": "catalog:frontend",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:frontend",
+    "@types/react-dom": "catalog:frontend",
+    "@vitejs/plugin-rsc": "catalog:frontend",
+    "typescript": "catalog:",
+    "vinext": "catalog:frontend",
+    "vite": "catalog:frontend",
+    "vite-tsconfig-paths": "catalog:frontend",
+    "wrangler": "catalog:cloudflare"
+  }
+}

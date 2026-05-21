@@ -1,0 +1,22 @@
+$schema: "https://moonrepo.dev/schemas/workspace.json"
+
+projects:
+  api: "apps/api"
+  app: "apps/app"
+  landing: "apps/landing"
+  mobile: "apps/mobile"
+  storybook: "apps/storybook"
+  auth: "packages/auth"
+  config: "packages/config"
+  contract: "packages/contract"
+  database: "packages/database"
+  domains: "packages/domains"
+  emails: "packages/emails"
+  i18n: "packages/i18n"
+  seed: "packages/seed"
+  ui: "packages/ui"
+
+vcs:
+  client: git
+  defaultBranch: main
+  provider: github

@@ -1,0 +1,27 @@
+{
+  "name": "@retardmaxxing/notifications",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./channels": "./src/channels/index.ts",
+    "./templates": "./src/templates.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "catalog:validation"
+  },
+  "peerDependencies": {
+    "@retardmaxxing/emails": "workspace:*"
+  },
+  "devDependencies": {
+    "@retardmaxxing/config": "workspace:*",
+    "@retardmaxxing/emails": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:testing"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@retardmaxxing/database",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts",
+    "./types": "./src/types.ts"
+  },
+  "scripts": {
+    "db:generate": "drizzle-kit generate",
+    "db:studio": "drizzle-kit studio",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "drizzle-orm": "catalog:cloudflare"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@retardmaxxing/config": "workspace:*",
+    "drizzle-kit": "catalog:cloudflare",
+    "typescript": "catalog:",
+    "wrangler": "catalog:cloudflare"
+  }
+}

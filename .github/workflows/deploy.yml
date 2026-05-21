@@ -1,0 +1,180 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      env:
+        type: choice
+        options: [staging, production]
+        default: staging
+      mobile:
+        type: boolean
+        description: "Also push EAS Update OTA"
+        default: true
+
+concurrency:
+  group: deploy-${{ github.event.inputs.env || 'production' }}
+  cancel-in-progress: false
+
+env:
+  BUN_VERSION: 1.3.11
+  TARGET_ENV: ${{ github.event.inputs.env || 'production' }}
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────
+  # 0. wait for CI on this commit (re-uses install/lint/typecheck/build run)
+  # ──────────────────────────────────────────────────────────────────
+  wait-ci:
+    name: wait CI
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push'
+    steps:
+      - uses: lewagon/wait-on-check-action@v1.3.4
+        with:
+          ref: ${{ github.sha }}
+          check-name: ci-pass
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          wait-interval: 15
+
+  # ──────────────────────────────────────────────────────────────────
+  # 1. shared install (cached)
+  # ──────────────────────────────────────────────────────────────────
+  install:
+    name: install
+    runs-on: ubuntu-latest
+    needs: [wait-ci]
+    if: |
+      always() &&
+      (needs.wait-ci.result == 'success' || needs.wait-ci.result == 'skipped')
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        id: cache-modules
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
+
+  # ──────────────────────────────────────────────────────────────────
+  # 2. apply D1 migrations BEFORE deploying API
+  # ──────────────────────────────────────────────────────────────────
+  migrate:
+    name: D1 migrate (${{ github.event.inputs.env || 'production' }})
+    runs-on: ubuntu-latest
+    needs: install
+    environment: ${{ github.event.inputs.env || 'production' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - name: Apply migrations
+        run: |
+          cd apps/api
+          bunx wrangler d1 migrations apply retardmaxxing-db --remote --env "$TARGET_ENV"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  # ──────────────────────────────────────────────────────────────────
+  # 3. cloudflare deploy — api, app, landing in parallel
+  # ──────────────────────────────────────────────────────────────────
+  deploy-cloudflare:
+    name: deploy ${{ matrix.target }} (CF)
+    runs-on: ubuntu-latest
+    needs: migrate
+    environment: ${{ github.event.inputs.env || 'production' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [api, app, landing]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - name: Deploy ${{ matrix.target }}
+        run: |
+          cd apps/${{ matrix.target }}
+          if [ "${{ matrix.target }}" = "api" ]; then
+            bunx wrangler deploy --env "$TARGET_ENV"
+          else
+            bun run build
+            bunx wrangler deploy --env "$TARGET_ENV" || bunx wrangler deploy
+          fi
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+  # ──────────────────────────────────────────────────────────────────
+  # 4. EAS Update — OTA push to mobile (independent of CF deploys)
+  # ──────────────────────────────────────────────────────────────────
+  eas-update:
+    name: EAS update (mobile OTA)
+    runs-on: ubuntu-latest
+    needs: install
+    if: |
+      hashFiles('apps/mobile/app.json') != '' &&
+      (github.event_name == 'push' || github.event.inputs.mobile == 'true')
+    environment: ${{ github.event.inputs.env || 'production' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - name: Setup Expo / EAS
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - name: Publish OTA
+        run: |
+          cd apps/mobile
+          bunx eas update \
+            --branch "$TARGET_ENV" \
+            --message "${{ github.event.head_commit.message || github.sha }}" \
+            --non-interactive
+
+  # ──────────────────────────────────────────────────────────────────
+  # 5. summary gate
+  # ──────────────────────────────────────────────────────────────────
+  deployed:
+    name: deploy summary
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [deploy-cloudflare, eas-update]
+    steps:
+      - name: Report
+        run: |
+          echo "CF: ${{ needs.deploy-cloudflare.result }}"
+          echo "EAS: ${{ needs.eas-update.result }}"
+          if [[ "${{ needs.deploy-cloudflare.result }}" != "success" ]]; then
+            echo "::error::cloudflare deploy failed"
+            exit 1
+          fi

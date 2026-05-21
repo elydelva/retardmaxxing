@@ -1,0 +1,8 @@
+appId: com.retardmaxxing.app
+---
+- launchApp:
+    clearState: true
+- assertVisible: "retardmaxxing"
+- assertVisible:
+    text: "API:.*"
+    optional: true

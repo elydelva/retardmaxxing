@@ -1,0 +1,49 @@
+{
+  "name": "@retardmaxxing/mobile",
+  "version": "0.0.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "scripts": {
+    "start": "expo start",
+    "ios": "expo run:ios",
+    "android": "expo run:android",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@retardmaxxing/contract": "workspace:*",
+    "@retardmaxxing/api": "workspace:*",
+    "@noble/hashes": "^1.5.0",
+    "@tanstack/react-query": "catalog:frontend",
+    "@trpc/client": "catalog:trpc",
+    "@trpc/tanstack-react-query": "catalog:trpc",
+    "expo": "catalog:mobile",
+    "expo-apple-authentication": "catalog:mobile",
+    "expo-auth-session": "catalog:mobile",
+    "expo-constants": "~17.0.0",
+    "expo-crypto": "catalog:mobile",
+    "expo-device": "catalog:mobile",
+    "expo-application": "catalog:mobile",
+    "expo-notifications": "catalog:mobile",
+    "expo-router": "catalog:mobile",
+    "expo-secure-store": "catalog:mobile",
+    "expo-status-bar": "~2.0.0",
+    "expo-symbols": "catalog:mobile",
+    "@react-navigation/native": "catalog:mobile",
+    "@react-navigation/native-stack": "catalog:mobile",
+    "@shopify/restyle": "catalog:mobile",
+    "react-native-screens": "catalog:mobile",
+    "react-native-gesture-handler": "catalog:mobile",
+    "react-native-reanimated": "catalog:mobile",
+    "nativewind": "catalog:mobile",
+    "react": "catalog:frontend",
+    "react-native": "catalog:mobile",
+    "superjson": "^2.2.0",
+    "tailwindcss": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.25.0",
+    "@retardmaxxing/config": "workspace:*",
+    "@types/react": "catalog:frontend",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "name": "@retardmaxxing/auth",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./session": "./src/session.ts",
+    "./providers": "./src/providers.ts",
+    "./hmac": "./src/hmac.ts"
+  },
+  "scripts": {
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@oslojs/crypto": "catalog:auth",
+    "@oslojs/encoding": "catalog:auth",
+    "arctic": "catalog:auth",
+    "drizzle-orm": "catalog:cloudflare"
+  },
+  "peerDependencies": {
+    "@retardmaxxing/database": "workspace:*"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@retardmaxxing/config": "workspace:*",
+    "@retardmaxxing/database": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:testing"
+  }
+}

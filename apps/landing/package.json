@@ -1,0 +1,26 @@
+{
+  "name": "@retardmaxxing/landing",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --port 3002",
+    "build": "astro build",
+    "preview": "astro preview",
+    "deploy": "astro build && wrangler deploy",
+    "typecheck": "astro check"
+  },
+  "dependencies": {
+    "@astrojs/cloudflare": "catalog:landing",
+    "@astrojs/sitemap": "catalog:landing",
+    "@tailwindcss/vite": "catalog:frontend",
+    "astro": "catalog:landing",
+    "tailwindcss": "catalog:frontend"
+  },
+  "devDependencies": {
+    "@retardmaxxing/config": "workspace:*",
+    "@retardmaxxing/ui": "workspace:*",
+    "typescript": "catalog:",
+    "wrangler": "catalog:cloudflare"
+  }
+}

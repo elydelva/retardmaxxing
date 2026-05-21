@@ -1,0 +1,9 @@
+{
+  "extends": "@retardmaxxing/config/tsconfig.node.json",
+  "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "types": ["node", "@cloudflare/workers-types"]
+  },
+  "include": ["src/**/*"]
+}

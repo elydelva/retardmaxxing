@@ -1,0 +1,29 @@
+{
+  "name": "@retardmaxxing/ui-native",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "exports": {
+    ".": "./src/index.ts",
+    "./theme": "./src/theme/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "@shopify/restyle": "catalog:mobile",
+    "expo-symbols": "catalog:mobile",
+    "react": "catalog:frontend",
+    "react-native": "catalog:mobile"
+  },
+  "devDependencies": {
+    "@retardmaxxing/config": "workspace:*",
+    "@shopify/restyle": "catalog:mobile",
+    "@types/react": "catalog:frontend",
+    "expo-symbols": "catalog:mobile",
+    "react": "catalog:frontend",
+    "react-native": "catalog:mobile",
+    "typescript": "catalog:"
+  }
+}

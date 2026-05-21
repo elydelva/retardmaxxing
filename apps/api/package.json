@@ -1,0 +1,46 @@
+{
+  "name": "@retardmaxxing/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "exports": {
+    "./trpc": "./src/trpc/root.ts"
+  },
+  "scripts": {
+    "dev": "wrangler dev --persist-to ../../.wrangler/state",
+    "build": "wrangler deploy --dry-run --outdir=dist",
+    "deploy": "wrangler deploy",
+    "deploy:staging": "wrangler deploy --env staging",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:integration": "vitest run --project integration",
+    "test:watch": "vitest",
+    "cf-typegen": "wrangler types"
+  },
+  "dependencies": {
+    "@hono/trpc-server": "catalog:trpc",
+    "@retardmaxxing/auth": "workspace:*",
+    "@retardmaxxing/billing": "workspace:*",
+    "@retardmaxxing/contract": "workspace:*",
+    "@retardmaxxing/database": "workspace:*",
+    "@retardmaxxing/domains": "workspace:*",
+    "@retardmaxxing/notifications": "workspace:*",
+    "@trpc/server": "catalog:trpc",
+    "awilix": "catalog:cloudflare",
+    "drizzle-orm": "catalog:cloudflare",
+    "hono": "catalog:cloudflare",
+    "superjson": "^2.2.0",
+    "zod": "catalog:validation"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
+    "@cloudflare/vitest-pool-workers": "catalog:testing",
+    "@noble/hashes": "catalog:crypto",
+    "@retardmaxxing/config": "workspace:*",
+    "typescript": "catalog:",
+    "vitest": "catalog:testing",
+    "wrangler": "catalog:cloudflare"
+  }
+}

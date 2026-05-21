@@ -1,0 +1,170 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  BUN_VERSION: 1.3.11
+
+jobs:
+  # ──────────────────────────────────────────────────────────────────
+  # 1. install — primes the cache for every downstream job
+  # ──────────────────────────────────────────────────────────────────
+  install:
+    name: install
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ env.BUN_VERSION }}
+      - name: Cache node_modules
+        id: cache-modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - name: Install
+        if: steps.cache-modules.outputs.cache-hit != 'true'
+        run: bun install --frozen-lockfile
+
+  # ──────────────────────────────────────────────────────────────────
+  # 2. atomic checks — all run in parallel, all depend on install
+  # ──────────────────────────────────────────────────────────────────
+  format:
+    name: format
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - run: bunx biome format --no-errors-on-unmatched .
+
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - uses: actions/cache@v4
+        with:
+          path: .moon/cache
+          key: moon-lint-${{ runner.os }}-${{ github.sha }}
+          restore-keys: moon-lint-${{ runner.os }}-
+      - run: bun run lint
+
+  typecheck:
+    name: typecheck
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - uses: actions/cache@v4
+        with:
+          path: .moon/cache
+          key: moon-typecheck-${{ runner.os }}-${{ github.sha }}
+          restore-keys: moon-typecheck-${{ runner.os }}-
+      - name: Apps generate (wrangler types)
+        run: bun run --cwd apps/api cf-typegen || true
+      - run: bun run typecheck
+
+  test:
+    name: test
+    runs-on: ubuntu-latest
+    needs: install
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - uses: actions/cache@v4
+        with:
+          path: .moon/cache
+          key: moon-test-${{ runner.os }}-${{ github.sha }}
+          restore-keys: moon-test-${{ runner.os }}-
+      - run: bun run test
+
+  # ──────────────────────────────────────────────────────────────────
+  # 3. build — only after lint + typecheck pass
+  # ──────────────────────────────────────────────────────────────────
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    needs: [lint, typecheck]
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [api, app, landing]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: oven-sh/setup-bun@v2
+        with: { bun-version: 1.3.11 }
+      - uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            apps/*/node_modules
+            packages/*/node_modules
+          key: modules-${{ runner.os }}-${{ env.BUN_VERSION }}-${{ hashFiles('bun.lock', 'bun.lockb', 'package.json') }}
+      - run: bun run --cwd apps/${{ matrix.target }} build
+
+  # ──────────────────────────────────────────────────────────────────
+  # 4. summary gate — single required check for branch protection
+  # ──────────────────────────────────────────────────────────────────
+  ci-pass:
+    name: ci-pass
+    runs-on: ubuntu-latest
+    if: always()
+    needs: [format, lint, typecheck, test, build]
+    steps:
+      - name: Verify all checks succeeded
+        run: |
+          if [[ "${{ needs.format.result }}" != "success" ]] \
+          || [[ "${{ needs.lint.result }}" != "success" ]] \
+          || [[ "${{ needs.typecheck.result }}" != "success" ]] \
+          || [[ "${{ needs.test.result }}" != "success" ]] \
+          || [[ "${{ needs.build.result }}" != "success" ]]; then
+            echo "::error::one or more required checks failed"
+            exit 1
+          fi

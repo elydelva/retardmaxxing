@@ -1,0 +1,4 @@
+{
+  "extends": "@retardmaxxing/config/tsconfig.web.json",
+  "include": [".storybook/**/*", "stories/**/*"]
+}

@@ -1,0 +1,22 @@
+{
+  "name": "@retardmaxxing/contract",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./auth": "./src/auth.ts",
+    "./users": "./src/users.ts",
+    "./plans": "./src/plans.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "zod": "catalog:validation"
+  },
+  "devDependencies": {
+    "@retardmaxxing/config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

@@ -1,0 +1,7 @@
+appId: com.retardmaxxing.app
+---
+- launchApp
+- assertVisible: "retardmaxxing"
+- tapOn: "Profile"
+- tapOn: "Settings"
+- assertVisible: "Notifications"

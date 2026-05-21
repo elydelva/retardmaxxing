@@ -1,0 +1,8 @@
+type: "library"
+language: "typescript"
+
+tasks:
+  typecheck:
+    command: 'echo "config: no source"'
+    options:
+      cache: false
