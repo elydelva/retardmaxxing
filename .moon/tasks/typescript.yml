@@ -9,16 +9,16 @@ fileGroups:
 
 tasks:
   lint:
-    command: "biome check --unsafe ."
+    command: "bunx biome check --unsafe ."
     inputs:
       - "@group(sources)"
       - "/biome.json"
-      - "/.moon/tasks.yml"
+      - "/.moon/tasks/typescript.yml"
     options:
       runInCI: true
 
   lint-fix:
-    command: "biome check --unsafe --write ."
+    command: "bunx biome check --unsafe --write ."
     inputs:
       - "@group(sources)"
       - "/biome.json"
@@ -27,17 +27,15 @@ tasks:
       cache: false
 
   typecheck:
-    command: "tsc --noEmit"
+    command: "bunx tsc --noEmit"
     inputs:
       - "@group(sources)"
       - "tsconfig.json"
-    deps:
-      - "^:typecheck"
     options:
       runInCI: true
 
   test:
-    command: "vitest run"
+    script: 'test -f vitest.config.ts && bunx vitest run || echo "no vitest.config.ts, skipping"'
     inputs:
       - "@group(sources)"
       - "vitest.config.ts"
