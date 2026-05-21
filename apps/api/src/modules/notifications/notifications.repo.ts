@@ -1,15 +1,14 @@
-import { and, eq, isNull } from "drizzle-orm";
+import type { UpdateNotificationPreferencesInput } from "@retardmaxxing/contract";
 import type {
   Database,
   NewPushToken,
   NotificationPreferences,
   PushToken,
 } from "@retardmaxxing/database";
-import {
-  notificationLog,
-  notificationPreferences,
-  pushTokens,
-} from "@retardmaxxing/database";
+import { notificationLog, notificationPreferences, pushTokens } from "@retardmaxxing/database";
+import { and, eq, isNull } from "drizzle-orm";
+
+export type NotificationPreferencesInput = UpdateNotificationPreferencesInput;
 
 export interface NotificationsRepo {
   upsertPushToken(values: NewPushToken): Promise<void>;
@@ -17,14 +16,14 @@ export interface NotificationsRepo {
   listActivePushTokens(userId: string): Promise<PushToken[]>;
   markTokensRevoked(tokens: string[]): Promise<void>;
   getPreferences(userId: string): Promise<NotificationPreferences | null>;
-  upsertPreferences(userId: string, prefs: Partial<NotificationPreferences>): Promise<void>;
+  upsertPreferences(userId: string, prefs: NotificationPreferencesInput): Promise<void>;
   logDelivery(values: {
     id: string;
     userId: string;
     kind: string;
     channel: "push" | "email" | "sms";
     status: string;
-    error?: string;
+    error?: string | undefined;
   }): Promise<void>;
 }
 
@@ -77,6 +76,7 @@ export function createNotificationsRepo({ db }: { db: Database }): Notifications
       );
     },
     async upsertPreferences(userId, prefs) {
+      const perKind = prefs.perKind as NotificationPreferences["perKind"];
       await db
         .insert(notificationPreferences)
         .values({
@@ -84,7 +84,7 @@ export function createNotificationsRepo({ db }: { db: Database }): Notifications
           push: prefs.push ?? true,
           email: prefs.email ?? true,
           sms: prefs.sms ?? false,
-          perKind: prefs.perKind ?? null,
+          perKind: perKind ?? null,
           updatedAt: new Date(),
         })
         .onConflictDoUpdate({
@@ -93,7 +93,7 @@ export function createNotificationsRepo({ db }: { db: Database }): Notifications
             push: prefs.push,
             email: prefs.email,
             sms: prefs.sms,
-            perKind: prefs.perKind,
+            perKind,
             updatedAt: new Date(),
           },
         });

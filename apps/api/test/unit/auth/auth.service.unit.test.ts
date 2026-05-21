@@ -1,8 +1,8 @@
+import type { TRPCError } from "@trpc/server";
 import { describe, expect, it, vi } from "vitest";
-import { TRPCError } from "@trpc/server";
-import { createAuthService, type AuthServiceDeps } from "../../../src/modules/auth/auth.service";
-import { createFakeUsersRepo, makeUser, silentLogger } from "../../helpers/fakes";
 import type { AppBindings } from "../../../src/lib/bindings";
+import { type AuthServiceDeps, createAuthService } from "../../../src/modules/auth/auth.service";
+import { createFakeUsersRepo, makeUser, silentLogger } from "../../helpers/fakes";
 
 const stubEnv = {} as AppBindings;
 const stubDb = {
@@ -77,9 +77,9 @@ describe("authService.signIn", () => {
       usersRepo,
       logger: silentLogger,
     });
-    await expect(
-      service.signIn({ email: "ghost@test.dev", password: "x" })
-    ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(service.signIn({ email: "ghost@test.dev", password: "x" })).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
   });
 
   it("rejects when password missing", async () => {
@@ -92,8 +92,8 @@ describe("authService.signIn", () => {
       usersRepo,
       logger: silentLogger,
     });
-    await expect(
-      service.signIn({ email: "ada@test.dev", password: "x" })
-    ).rejects.toMatchObject({ code: "UNAUTHORIZED" });
+    await expect(service.signIn({ email: "ada@test.dev", password: "x" })).rejects.toMatchObject({
+      code: "UNAUTHORIZED",
+    });
   });
 });

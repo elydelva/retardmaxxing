@@ -1,7 +1,7 @@
 import { initTRPC, TRPCError } from "@trpc/server";
+import type { AwilixContainer } from "awilix";
 import type { Context as HonoContext } from "hono";
 import superjson from "superjson";
-import type { AwilixContainer } from "awilix";
 import type { AppCradle } from "../container/cradle";
 import type { AppBindings } from "../lib/bindings";
 

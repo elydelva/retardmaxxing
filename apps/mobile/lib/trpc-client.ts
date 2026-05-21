@@ -9,7 +9,6 @@ import { buildIntegrityHeaders } from "./integrity";
 // `wrangler dev`. Other envs: API_URLS map.
 const devHost =
   Constants.expoConfig?.hostUri?.split(":")[0] ??
-  // @ts-expect-error legacy expoGoConfig fallback
   Constants.expoGoConfig?.debuggerHost?.split(":")[0];
 
 const env = parseEnv(process.env.EXPO_PUBLIC_ENV, "local");

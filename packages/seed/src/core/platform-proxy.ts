@@ -1,8 +1,8 @@
 import { resolve } from "node:path";
-import { getPlatformProxy } from "wrangler";
 import { createDb } from "@retardmaxxing/database";
-import type { Env, Logger, SeederContext } from "./types";
+import { getPlatformProxy } from "wrangler";
 import { workspaceRoot } from "./env";
+import type { Env, Logger, SeederContext } from "./types";
 
 export interface ProxyOptions {
   env: Env;
@@ -23,11 +23,11 @@ export async function buildContext(opts: ProxyOptions): Promise<{
     OBJECTS?: import("@cloudflare/workers-types").R2Bucket;
     CACHE?: import("@cloudflare/workers-types").KVNamespace;
     JOBS?: import("@cloudflare/workers-types").Queue;
-  }>({
-    configPath,
-    environment: opts.env === "local" ? undefined : opts.env,
-    experimental: { remoteBindings: opts.remote },
-  });
+  }>(
+    opts.env === "local"
+      ? { configPath, remoteBindings: opts.remote }
+      : { configPath, environment: opts.env, remoteBindings: opts.remote }
+  );
   const db = createDb(proxy.env.DB);
   const ctx: SeederContext = {
     env: opts.env,

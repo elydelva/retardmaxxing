@@ -5,12 +5,9 @@ import { cleanup } from "@testing-library/react";
 
 // Register happy-dom globally
 GlobalRegistrator.register();
-console.log(
-	"✓ Happy DOM registered, document available:",
-	typeof document !== "undefined",
-);
+console.log("✓ Happy DOM registered, document available:", typeof document !== "undefined");
 
 expect.extend(matchers);
 afterEach(() => {
-	cleanup();
+  cleanup();
 });

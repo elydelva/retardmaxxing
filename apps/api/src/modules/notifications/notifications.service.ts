@@ -1,10 +1,9 @@
 import {
+  type NotificationKind,
+  type NotificationPayload,
   renderTemplate,
   sendExpoPush,
   sendResendEmail,
-  sendTwilioSms,
-  type NotificationKind,
-  type NotificationPayload,
 } from "@retardmaxxing/notifications";
 import type { AppBindings } from "../../lib/bindings";
 import type { Logger } from "../../lib/logger";
@@ -39,7 +38,7 @@ export function createNotificationsService(deps: NotificationsServiceDeps): Noti
     kind: string,
     channel: "push" | "email" | "sms"
   ): boolean {
-    const fallback = channel === "sms" ? false : true;
+    const fallback = channel !== "sms";
     if (!prefs) return fallback;
     const perKind = prefs.perKind?.[kind]?.[channel];
     if (perKind !== undefined) return perKind;

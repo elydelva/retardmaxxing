@@ -21,8 +21,8 @@ export function EmailVerificationEmail({
         <CTAButton href={verifyUrl}>Confirm my email</CTAButton>
       </Section>
       <Text style={muted}>
-        This link expires in <strong>{expiresInHours} hours</strong>. If you didn't sign up,
-        ignore this message.
+        This link expires in <strong>{expiresInHours} hours</strong>. If you didn't sign up, ignore
+        this message.
       </Text>
     </EmailShell>
   );

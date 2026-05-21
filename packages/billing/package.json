@@ -16,6 +16,7 @@
     "zod": "catalog:validation"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
     "@retardmaxxing/config": "workspace:*",
     "typescript": "catalog:",
     "vitest": "catalog:testing"

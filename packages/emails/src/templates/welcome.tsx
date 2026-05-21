@@ -15,9 +15,7 @@ export function WelcomeEmail({ name, appUrl }: WelcomeProps) {
       <Section style={ctaWrap}>
         <CTAButton href={appUrl}>Open the app</CTAButton>
       </Section>
-      <Text style={muted}>
-        If you didn't sign up, you can ignore this message.
-      </Text>
+      <Text style={muted}>If you didn't sign up, you can ignore this message.</Text>
     </EmailShell>
   );
 }

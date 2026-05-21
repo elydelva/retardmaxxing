@@ -34,5 +34,5 @@ export async function sendTwilioSms(
   );
   const json = (await res.json()) as { sid?: string; message?: string };
   if (!res.ok) return { ok: false, error: json.message ?? `HTTP ${res.status}` };
-  return { ok: true, sid: json.sid };
+  return json.sid ? { ok: true, sid: json.sid } : { ok: true };
 }

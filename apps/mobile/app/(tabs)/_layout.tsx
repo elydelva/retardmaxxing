@@ -1,6 +1,5 @@
-import { Tabs } from "expo-router";
-import { Platform } from "react-native";
 import { Symbol } from "@retardmaxxing/ui-native";
+import { Tabs } from "expo-router";
 
 export default function TabsLayout() {
   return (

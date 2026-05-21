@@ -1,10 +1,10 @@
-import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import {
-  createBillingService,
-  type BillingServiceDeps,
-} from "../../../src/modules/billing/billing.service";
-import type { BillingRepo } from "../../../src/modules/billing/billing.repo";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AppBindings } from "../../../src/lib/bindings";
+import type { BillingRepo } from "../../../src/modules/billing/billing.repo";
+import {
+  type BillingServiceDeps,
+  createBillingService,
+} from "../../../src/modules/billing/billing.service";
 import { createFakeUsersRepo, makeUser, silentLogger } from "../../helpers/fakes";
 
 const STRIPE_SECRET = "sk_test";
@@ -107,7 +107,10 @@ describe("billingService.createOneTimeCheckout", () => {
 
 describe("billingService.handleWebhookEvent", () => {
   beforeEach(() => {
-    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 200 })));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("{}", { status: 200 }))
+    );
   });
   afterEach(() => vi.unstubAllGlobals());
 

@@ -1,4 +1,8 @@
-export type NotificationKind = "welcome" | "subscription_active" | "payment_failed" | "trial_ending";
+export type NotificationKind =
+  | "welcome"
+  | "subscription_active"
+  | "payment_failed"
+  | "trial_ending";
 
 export interface NotificationPayload {
   welcome: { name: string };
@@ -13,7 +17,9 @@ export interface RenderedNotification {
   sms?: { body: string };
 }
 
-type Renderer<K extends NotificationKind> = (payload: NotificationPayload[K]) => RenderedNotification;
+type Renderer<K extends NotificationKind> = (
+  payload: NotificationPayload[K]
+) => RenderedNotification;
 
 const templates: { [K in NotificationKind]: Renderer<K> } = {
   welcome: (p) => ({

@@ -11,7 +11,8 @@ type FormArray = FormValue[];
 function flatten(params: URLSearchParams, prefix: string, value: FormValue): void {
   if (value === null || value === undefined) return;
   if (Array.isArray(value)) {
-    value.forEach((item, i) => flatten(params, `${prefix}[${i}]`, item));
+    for (let i = 0; i < value.length; i++)
+      flatten(params, `${prefix}[${i}]`, value[i] as FormValue);
     return;
   }
   if (typeof value === "object") {
@@ -51,8 +52,8 @@ async function stripeRequest<T>(
   const res = await fetch(`${STRIPE_API_BASE}/${path}`, init);
   const json = (await res.json()) as Record<string, unknown>;
   if (!res.ok) {
-    const errObj = json.error as Record<string, unknown> | undefined;
-    const msg = typeof errObj?.message === "string" ? errObj.message : "Stripe API error";
+    const errObj = json["error"] as Record<string, unknown> | undefined;
+    const msg = typeof errObj?.["message"] === "string" ? errObj["message"] : "Stripe API error";
     throw new Error(`Stripe ${res.status}: ${msg}`);
   }
   return json as T;

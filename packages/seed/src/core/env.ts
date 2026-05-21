@@ -1,10 +1,10 @@
-import { readFileSync, existsSync } from "node:fs";
-import { resolve, dirname } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import type { Env } from "./types";
 
 export function workspaceRoot(): string {
-  const fromMoon = process.env.MOON_WORKSPACE_ROOT;
+  const fromMoon = process.env["MOON_WORKSPACE_ROOT"];
   if (fromMoon) return fromMoon;
   let dir = dirname(fileURLToPath(import.meta.url));
   while (dir !== "/" && !existsSync(resolve(dir, "package.json"))) {
@@ -28,10 +28,7 @@ export function loadDevVars(root: string = workspaceRoot()): Record<string, stri
     if (eq < 0) continue;
     const key = trimmed.slice(0, eq).trim();
     let val = trimmed.slice(eq + 1).trim();
-    if (
-      (val.startsWith('"') && val.endsWith('"')) ||
-      (val.startsWith("'") && val.endsWith("'"))
-    ) {
+    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
       val = val.slice(1, -1);
     }
     out[key] = val;
@@ -43,5 +40,5 @@ export function loadDevVars(root: string = workspaceRoot()): Record<string, stri
 export function isProductionWriteAllowed(env: Env, remote: boolean, yes: boolean): boolean {
   if (env !== "production") return true;
   if (!remote) return true;
-  return process.env.SEED_ALLOW_REMOTE === "1" && yes;
+  return process.env["SEED_ALLOW_REMOTE"] === "1" && yes;
 }

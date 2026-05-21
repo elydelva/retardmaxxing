@@ -6,7 +6,9 @@
   "exports": {
     ".": "./src/index.ts"
   },
-  "scripts": { "typecheck": "tsc --noEmit" },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
   "dependencies": {
     "@retardmaxxing/contract": "workspace:*",
     "zod": "catalog:validation"

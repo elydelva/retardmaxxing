@@ -1,6 +1,6 @@
+import { useTheme } from "@shopify/restyle";
 import type { ReactNode } from "react";
 import { SafeAreaView, StyleSheet } from "react-native";
-import { useTheme } from "@shopify/restyle";
 import type { Theme } from "../theme";
 import { Box } from "./Box";
 

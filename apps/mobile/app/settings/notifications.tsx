@@ -1,6 +1,6 @@
+import { Box, Card, ListItem, Screen, Text } from "@retardmaxxing/ui-native";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Switch } from "react-native";
-import { Box, Card, ListItem, Screen, Text } from "@retardmaxxing/ui-native";
 import { trpcClient } from "../../lib/trpc-client";
 
 export default function NotificationsPrefs() {
@@ -20,14 +20,11 @@ export default function NotificationsPrefs() {
       <Box gap="m">
         <Text variant="h2">Notifications</Text>
         {prefs.data ? (
-          <Card padding="none">
+          <Card padding="xs">
             <ListItem
               title="Push"
               trailing={
-                <Switch
-                  value={prefs.data.push}
-                  onValueChange={(v) => update.mutate({ push: v })}
-                />
+                <Switch value={prefs.data.push} onValueChange={(v) => update.mutate({ push: v })} />
               }
             />
             <ListItem

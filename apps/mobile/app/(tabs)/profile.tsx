@@ -1,5 +1,5 @@
-import { Link } from "expo-router";
 import { Box, Button, Screen, Text } from "@retardmaxxing/ui-native";
+import { Link } from "expo-router";
 
 export default function Profile() {
   return (

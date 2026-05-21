@@ -1,7 +1,7 @@
 import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
+import { type Database, type Session, sessions, type User, users } from "@retardmaxxing/database";
 import { eq } from "drizzle-orm";
-import { sessions, users, type Database, type Session, type User } from "@retardmaxxing/database";
 
 export const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30; // 30 days
 
@@ -9,11 +9,7 @@ export function hashToken(token: string): string {
   return encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 }
 
-export async function createSession(
-  db: Database,
-  userId: string,
-  token: string
-): Promise<Session> {
+export async function createSession(db: Database, userId: string, token: string): Promise<Session> {
   const id = hashToken(token);
   const expiresAt = new Date(Date.now() + SESSION_TTL_MS);
   const session: Session = {

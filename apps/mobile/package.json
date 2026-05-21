@@ -13,6 +13,8 @@
     "@retardmaxxing/contract": "workspace:*",
     "@retardmaxxing/api": "workspace:*",
     "@retardmaxxing/env": "workspace:*",
+    "@retardmaxxing/ui-native": "workspace:*",
+    "expo-linking": "~8.0.0",
     "@noble/hashes": "^1.5.0",
     "@tanstack/react-query": "catalog:frontend",
     "@trpc/client": "catalog:trpc",

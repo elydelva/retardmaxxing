@@ -1,4 +1,4 @@
-import { asFunction, type AwilixContainer } from "awilix";
+import { type AwilixContainer, asFunction } from "awilix";
 import { createUsersRepo } from "../../modules/users/users.repo";
 import type { AppCradle } from "../cradle";
 

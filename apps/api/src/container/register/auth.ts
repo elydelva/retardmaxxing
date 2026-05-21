@@ -1,4 +1,4 @@
-import { asFunction, type AwilixContainer } from "awilix";
+import { type AwilixContainer, asFunction } from "awilix";
 import { createAuthService } from "../../modules/auth/auth.service";
 import type { AppCradle } from "../cradle";
 

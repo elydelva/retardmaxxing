@@ -1,6 +1,6 @@
 import { env } from "cloudflare:test";
-import { beforeAll, describe, expect, it } from "vitest";
 import { createDb } from "@retardmaxxing/database";
+import { beforeAll, describe, expect, it } from "vitest";
 import { createUsersRepo } from "../../src/modules/users/users.repo";
 import { applyMigrations } from "../helpers/apply-migrations";
 

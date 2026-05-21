@@ -5,7 +5,7 @@ import { buildContainer } from "./container/container";
 import type { AppBindings } from "./lib/bindings";
 import { integrityMiddleware } from "./middleware/integrity";
 import { stripeWebhookHandler } from "./routes/webhooks/stripe";
-import { makeContext, type HonoVars } from "./trpc/context";
+import { type HonoVars, makeContext } from "./trpc/context";
 import { appRouter } from "./trpc/root";
 
 const app = new Hono<{ Bindings: AppBindings; Variables: HonoVars }>();
@@ -27,7 +27,7 @@ app.get("/", (c) => c.json({ name: "retardmaxxing-api", ok: true }));
 app.use("/trpc/*", (c, next) =>
   trpcServer({
     router: appRouter,
-    createContext: (_opts) => makeContext(c, new Headers()),
+    createContext: (_opts) => makeContext(c, new Headers()) as unknown as Record<string, unknown>,
   })(c, next)
 );
 

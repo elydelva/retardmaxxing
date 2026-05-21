@@ -9,8 +9,8 @@ import superjson from "superjson";
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 export type RouterInputs = inferRouterInputs<AppRouter>;
 
-const env = parseEnv(process.env.NEXT_PUBLIC_ENV, "local");
-const url = `${process.env.NEXT_PUBLIC_API_URL ?? API_URLS[env]}/trpc`;
+const env = parseEnv(process.env["NEXT_PUBLIC_ENV"], "local");
+const url = `${process.env["NEXT_PUBLIC_API_URL"] ?? API_URLS[env]}/trpc`;
 
 export const trpcClient = createTRPCClient<AppRouter>({
   links: [httpBatchLink({ url, transformer: superjson })],

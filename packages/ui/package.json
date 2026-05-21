@@ -44,6 +44,9 @@
   },
   "devDependencies": {
     "@retardmaxxing/config": "workspace:*",
+    "@testing-library/jest-dom": "catalog:testing",
+    "@testing-library/react": "catalog:testing",
+    "@types/bun": "latest",
     "@types/react": "catalog:frontend",
     "@types/react-dom": "catalog:frontend",
     "react": "catalog:frontend",

@@ -24,7 +24,9 @@
     "@retardmaxxing/ui": "workspace:*",
     "@tanstack/react-query": "catalog:frontend",
     "@trpc/client": "catalog:trpc",
+    "@trpc/server": "catalog:trpc",
     "@trpc/tanstack-react-query": "catalog:trpc",
+    "superjson": "^2.2.0",
     "clsx": "catalog:frontend",
     "next": "^16.0.0",
     "react": "catalog:frontend",
@@ -33,6 +35,7 @@
   },
   "devDependencies": {
     "@cloudflare/vite-plugin": "catalog:cloudflare",
+    "@cloudflare/workers-types": "catalog:cloudflare",
     "@retardmaxxing/config": "workspace:*",
     "@testing-library/jest-dom": "catalog:testing",
     "@testing-library/react": "catalog:testing",

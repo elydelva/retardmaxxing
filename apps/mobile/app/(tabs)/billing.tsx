@@ -1,6 +1,6 @@
+import { Box, Button, Card, ListItem, Screen, Text } from "@retardmaxxing/ui-native";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import * as Linking from "expo-linking";
-import { Box, Button, Card, ListItem, Screen, Text } from "@retardmaxxing/ui-native";
 import { trpcClient } from "../../lib/trpc-client";
 
 export default function Billing() {

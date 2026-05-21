@@ -1,20 +1,21 @@
-import { defineWorkersProject } from "@cloudflare/vitest-pool-workers/config";
+import { cloudflareTest } from "@cloudflare/vitest-pool-workers";
+import { defineConfig } from "vitest/config";
 
-export default defineWorkersProject({
+export default defineConfig({
+  plugins: [
+    cloudflareTest({
+      wrangler: { configPath: "./wrangler.toml" },
+      miniflare: {
+        compatibilityDate: "2025-10-01",
+        compatibilityFlags: ["nodejs_compat"],
+        d1Databases: ["DB"],
+        r2Buckets: ["OBJECTS"],
+        kvNamespaces: ["CACHE"],
+      },
+    }),
+  ],
   test: {
     name: "integration",
     include: ["test/integration/**/*.int.test.ts"],
-    poolOptions: {
-      workers: {
-        wrangler: { configPath: "./wrangler.toml" },
-        miniflare: {
-          compatibilityDate: "2025-10-01",
-          compatibilityFlags: ["nodejs_compat"],
-          d1Databases: ["DB"],
-          r2Buckets: ["OBJECTS"],
-          kvNamespaces: ["CACHE"],
-        },
-      },
-    },
   },
 });

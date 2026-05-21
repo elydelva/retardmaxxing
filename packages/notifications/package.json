@@ -19,6 +19,7 @@
     "@retardmaxxing/emails": "workspace:*"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "catalog:cloudflare",
     "@retardmaxxing/config": "workspace:*",
     "@retardmaxxing/emails": "workspace:*",
     "typescript": "catalog:",

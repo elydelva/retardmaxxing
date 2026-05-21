@@ -1,4 +1,3 @@
-import { sql } from "drizzle-orm";
 import { index, integer, sqliteTable, text, uniqueIndex } from "drizzle-orm/sqlite-core";
 
 export const PROVIDERS = ["google", "apple"] as const;
@@ -204,11 +203,16 @@ export const notificationPreferences = sqliteTable("notification_preferences", {
   push: integer("push", { mode: "boolean" }).notNull().default(true),
   email: integer("email", { mode: "boolean" }).notNull().default(true),
   sms: integer("sms", { mode: "boolean" }).notNull().default(false),
-  perKind: text("per_kind", { mode: "json" }).$type<Record<string, {
-    push?: boolean;
-    email?: boolean;
-    sms?: boolean;
-  }>>(),
+  perKind: text("per_kind", { mode: "json" }).$type<
+    Record<
+      string,
+      {
+        push?: boolean;
+        email?: boolean;
+        sms?: boolean;
+      }
+    >
+  >(),
   updatedAt: integer("updated_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

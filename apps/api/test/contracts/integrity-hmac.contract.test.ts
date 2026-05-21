@@ -30,22 +30,32 @@ describe("integrity HMAC contract", () => {
   it("server accepts what mobile produces", () => {
     const ts = Date.now();
     const sig = mobileSign(key, "POST", "/trpc/auth.signIn", ts, "{}");
-    expect(verifyRequest(key, { method: "POST", path: "/trpc/auth.signIn", body: "{}", timestamp: ts }, sig)).toBe(
-      true
-    );
+    expect(
+      verifyRequest(
+        key,
+        { method: "POST", path: "/trpc/auth.signIn", body: "{}", timestamp: ts },
+        sig
+      )
+    ).toBe(true);
   });
 
   it("server rejects tampered body", () => {
     const ts = Date.now();
     const sig = mobileSign(key, "POST", "/trpc/x", ts, "{}");
-    expect(verifyRequest(key, { method: "POST", path: "/trpc/x", body: "{tampered}", timestamp: ts }, sig)).toBe(
-      false
-    );
+    expect(
+      verifyRequest(
+        key,
+        { method: "POST", path: "/trpc/x", body: "{tampered}", timestamp: ts },
+        sig
+      )
+    ).toBe(false);
   });
 
   it("server rejects different method", () => {
     const ts = Date.now();
     const sig = mobileSign(key, "POST", "/trpc/x", ts, "");
-    expect(verifyRequest(key, { method: "GET", path: "/trpc/x", body: "", timestamp: ts }, sig)).toBe(false);
+    expect(
+      verifyRequest(key, { method: "GET", path: "/trpc/x", body: "", timestamp: ts }, sig)
+    ).toBe(false);
   });
 });

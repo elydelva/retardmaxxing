@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
 import type { Database, NewUser, User } from "@retardmaxxing/database";
 import { identities, sessions, users } from "@retardmaxxing/database";
+import { eq } from "drizzle-orm";
 
 export interface UsersRepo {
   findById(id: string): Promise<User | null>;
@@ -29,7 +29,7 @@ export function createUsersRepo({ db }: { db: Database }): UsersRepo {
     async findByEmail(email) {
       return (await db.select().from(users).where(eq(users.email, email)).get()) ?? null;
     },
-    async findByProviderIdentity(provider, providerUserId) {
+    async findByProviderIdentity(_provider, providerUserId) {
       const row = await db
         .select({ user: users })
         .from(identities)

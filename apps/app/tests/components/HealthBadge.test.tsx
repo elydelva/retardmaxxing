@@ -1,7 +1,7 @@
+import { useQuery } from "@tanstack/react-query";
 import { screen, waitFor } from "@testing-library/react";
 import { HttpResponse, http } from "msw";
 import { describe, expect, it } from "vitest";
-import { useQuery } from "@tanstack/react-query";
 import { server } from "../msw/server";
 import { renderWithQueryClient } from "../utils";
 

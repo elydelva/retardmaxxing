@@ -1,11 +1,11 @@
 import {
-  stripePost,
-  stripeGet,
-  type StripeSubscription,
+  checkoutSessionSchema,
   type StripeCheckoutSession,
   type StripeEvent,
+  type StripeSubscription,
   stripeEventSchema,
-  checkoutSessionSchema,
+  stripeGet,
+  stripePost,
   stripeSubscriptionSchema,
 } from "@retardmaxxing/billing";
 import { TRPCError } from "@trpc/server";
@@ -16,20 +16,23 @@ import type { BillingRepo } from "./billing.repo";
 
 export interface CreateOneTimeCheckoutInput {
   priceId: string;
-  quantity?: number;
-  successUrl?: string;
-  cancelUrl?: string;
+  quantity?: number | undefined;
+  successUrl?: string | undefined;
+  cancelUrl?: string | undefined;
 }
 
 export interface CreateSubscriptionCheckoutInput {
   priceId: string;
-  trialDays?: number;
-  successUrl?: string;
-  cancelUrl?: string;
+  trialDays?: number | undefined;
+  successUrl?: string | undefined;
+  cancelUrl?: string | undefined;
 }
 
 export interface BillingService {
-  createOneTimeCheckout(userId: string, input: CreateOneTimeCheckoutInput): Promise<{ url: string }>;
+  createOneTimeCheckout(
+    userId: string,
+    input: CreateOneTimeCheckoutInput
+  ): Promise<{ url: string }>;
   createSubscriptionCheckout(
     userId: string,
     input: CreateSubscriptionCheckoutInput
@@ -70,7 +73,7 @@ export function createBillingService(deps: BillingServiceDeps): BillingService {
   }
 
   async function syncSubscriptionFromStripe(sub: StripeSubscription): Promise<void> {
-    const userIdFromMetadata = sub.metadata?.userId;
+    const userIdFromMetadata = sub.metadata?.["userId"];
     let userId = userIdFromMetadata;
     if (!userId) {
       // backfill via customer lookup
@@ -78,7 +81,7 @@ export function createBillingService(deps: BillingServiceDeps): BillingService {
         `customers/${sub.customer}`,
         env.STRIPE_SECRET_KEY
       );
-      userId = customer.metadata?.userId;
+      userId = customer.metadata?.["userId"];
     }
     if (!userId) {
       logger.warn("billing.subscription.noUser", { subId: sub.id, customer: sub.customer });
@@ -103,9 +106,7 @@ export function createBillingService(deps: BillingServiceDeps): BillingService {
       currentPeriodStart: sub.current_period_start
         ? new Date(sub.current_period_start * 1000)
         : null,
-      currentPeriodEnd: sub.current_period_end
-        ? new Date(sub.current_period_end * 1000)
-        : null,
+      currentPeriodEnd: sub.current_period_end ? new Date(sub.current_period_end * 1000) : null,
       cancelAtPeriodEnd: sub.cancel_at_period_end ?? false,
       canceledAt: sub.canceled_at ? new Date(sub.canceled_at * 1000) : null,
       trialStart: sub.trial_start ? new Date(sub.trial_start * 1000) : null,
@@ -117,7 +118,7 @@ export function createBillingService(deps: BillingServiceDeps): BillingService {
 
   async function recordPaymentFromSession(session: StripeCheckoutSession): Promise<void> {
     if (!session.payment_intent) return;
-    const userId = session.metadata?.userId ?? session.client_reference_id;
+    const userId = session.metadata?.["userId"] ?? session.client_reference_id;
     if (!userId) {
       logger.warn("billing.payment.noUser", { sessionId: session.id });
       return;
@@ -173,7 +174,8 @@ export function createBillingService(deps: BillingServiceDeps): BillingService {
         subscription_data: { metadata: { userId } },
       };
       if (input.trialDays && input.trialDays > 0) {
-        (body.subscription_data as Record<string, unknown>).trial_period_days = input.trialDays;
+        (body["subscription_data"] as Record<string, unknown>)["trial_period_days"] =
+          input.trialDays;
       }
       const session = await stripePost<{ id: string; url: string }>(
         "checkout/sessions",
@@ -219,14 +221,17 @@ export function createBillingService(deps: BillingServiceDeps): BillingService {
         case "checkout.session.completed":
         case "checkout.session.async_payment_succeeded": {
           const session = checkoutSessionSchema.parse(event.data.object);
-          if (session.customer && session.metadata?.userId) {
-            await billingRepo.setStripeCustomerId(session.metadata.userId, session.customer);
+          if (session.customer && session.metadata?.["userId"]) {
+            await billingRepo.setStripeCustomerId(session.metadata["userId"], session.customer);
           }
           if (session.mode === "payment") {
             await recordPaymentFromSession(session);
           } else if (session.mode === "subscription" && session.subscription) {
             const sub = stripeSubscriptionSchema.parse(
-              await stripeGet<unknown>(`subscriptions/${session.subscription}`, env.STRIPE_SECRET_KEY)
+              await stripeGet<unknown>(
+                `subscriptions/${session.subscription}`,
+                env.STRIPE_SECRET_KEY
+              )
             );
             await syncSubscriptionFromStripe(sub);
           }

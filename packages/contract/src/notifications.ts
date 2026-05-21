@@ -30,6 +30,4 @@ export const NotificationPreferencesDto = z.object({
 export type NotificationPreferencesDto = z.infer<typeof NotificationPreferencesDto>;
 
 export const UpdateNotificationPreferencesInput = NotificationPreferencesDto.partial();
-export type UpdateNotificationPreferencesInput = z.infer<
-  typeof UpdateNotificationPreferencesInput
->;
+export type UpdateNotificationPreferencesInput = z.infer<typeof UpdateNotificationPreferencesInput>;

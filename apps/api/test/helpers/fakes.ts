@@ -1,6 +1,6 @@
 import type { User } from "@retardmaxxing/database";
-import type { UsersRepo } from "../../src/modules/users/users.repo";
 import type { Logger } from "../../src/lib/logger";
+import type { UsersRepo } from "../../src/modules/users/users.repo";
 
 /**
  * In-memory `UsersRepo` for unit tests. Pass overrides to simulate scenarios:

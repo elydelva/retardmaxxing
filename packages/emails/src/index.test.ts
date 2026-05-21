@@ -1,5 +1,5 @@
 import { expect, it } from "vitest";
-import { renderWelcome, renderEmailVerification } from "./index";
+import { renderEmailVerification, renderWelcome } from "./index";
 
 it("renderWelcome returns subject + html + text", async () => {
   const out = await renderWelcome({ name: "Ada", appUrl: "https://app.retardmaxxing.com" });

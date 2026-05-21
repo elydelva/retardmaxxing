@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
 import { Box, Card, Screen, Text } from "@retardmaxxing/ui-native";
+import { useQuery } from "@tanstack/react-query";
 import { trpcClient } from "../../lib/trpc-client";
 
 export default function Home() {
@@ -12,7 +12,9 @@ export default function Home() {
       <Box gap="m">
         <Text variant="h1">retardmaxxing</Text>
         <Card>
-          <Text variant="body">API: {health.isLoading ? "…" : health.data?.ok ? "ok" : "down"}</Text>
+          <Text variant="body">
+            API: {health.isLoading ? "…" : health.data?.ok ? "ok" : "down"}
+          </Text>
         </Card>
       </Box>
     </Screen>

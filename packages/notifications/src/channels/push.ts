@@ -2,10 +2,10 @@ export interface PushMessage {
   to: string;
   title: string;
   body: string;
-  data?: Record<string, unknown>;
-  sound?: "default" | null;
-  badge?: number;
-  channelId?: string;
+  data?: Record<string, unknown> | undefined;
+  sound?: "default" | null | undefined;
+  badge?: number | undefined;
+  channelId?: string | undefined;
 }
 
 export interface PushResult {
@@ -33,7 +33,7 @@ export async function sendExpoPush(
     Accept: "application/json",
     "Accept-Encoding": "gzip, deflate",
   };
-  if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
+  if (accessToken) headers["Authorization"] = `Bearer ${accessToken}`;
 
   const res = await fetch(EXPO_PUSH_URL, {
     method: "POST",

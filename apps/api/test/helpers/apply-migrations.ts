@@ -1,6 +1,6 @@
+import { env } from "cloudflare:test";
 import { readdirSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { env } from "cloudflare:test";
 
 /**
  * Applies all SQL migrations from packages/database/migrations to the test D1

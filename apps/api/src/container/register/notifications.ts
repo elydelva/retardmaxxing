@@ -1,4 +1,4 @@
-import { asFunction, type AwilixContainer } from "awilix";
+import { type AwilixContainer, asFunction } from "awilix";
 import { createNotificationsRepo } from "../../modules/notifications/notifications.repo";
 import { createNotificationsService } from "../../modules/notifications/notifications.service";
 import type { AppCradle } from "../cradle";

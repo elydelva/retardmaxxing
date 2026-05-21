@@ -83,7 +83,7 @@ export function createAuthService(deps: AuthServiceDeps): AuthService {
 
     async signIn({ email, password }) {
       const user = await usersRepo.findByEmail(email);
-      if (!user || !user.passwordHash) {
+      if (!user?.passwordHash) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
       }
       const ok = await verifyPassword(user.passwordHash, password);

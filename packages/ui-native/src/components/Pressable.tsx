@@ -1,4 +1,3 @@
-import { createRestyleComponent, type VariantProps, createVariant } from "@shopify/restyle";
 import type { ReactNode } from "react";
 import { Pressable as RNPressable, type PressableProps as RNPressableProps } from "react-native";
 import type { Theme } from "../theme";

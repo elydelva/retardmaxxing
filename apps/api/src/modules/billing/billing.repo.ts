@@ -1,4 +1,3 @@
-import { and, desc, eq } from "drizzle-orm";
 import type {
   Database,
   NewPayment,
@@ -14,6 +13,7 @@ import {
   subscriptions,
   users,
 } from "@retardmaxxing/database";
+import { and, desc, eq } from "drizzle-orm";
 
 export interface BillingRepo {
   setStripeCustomerId(userId: string, stripeCustomerId: string): Promise<void>;
@@ -67,11 +67,7 @@ export function createBillingRepo({ db }: { db: Database }): BillingRepo {
     },
     async findProductByStripePriceId(priceId) {
       return (
-        (await db
-          .select()
-          .from(products)
-          .where(eq(products.stripePriceId, priceId))
-          .get()) ?? null
+        (await db.select().from(products).where(eq(products.stripePriceId, priceId)).get()) ?? null
       );
     },
     async insertPayment(values) {

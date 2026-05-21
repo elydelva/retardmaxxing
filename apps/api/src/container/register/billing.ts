@@ -1,4 +1,4 @@
-import { asFunction, type AwilixContainer } from "awilix";
+import { type AwilixContainer, asFunction } from "awilix";
 import { createBillingRepo } from "../../modules/billing/billing.repo";
 import { createBillingService } from "../../modules/billing/billing.service";
 import type { AppCradle } from "../cradle";

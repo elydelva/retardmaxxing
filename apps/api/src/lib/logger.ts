@@ -47,8 +47,10 @@ function sanitize(meta: Record<string, unknown> | undefined): Record<string, unk
 }
 
 export const consoleLogger: Logger = {
-  info: (msg, meta) => console.log(JSON.stringify({ level: "info", msg, ...(sanitize(meta) ?? {}) })),
-  warn: (msg, meta) => console.warn(JSON.stringify({ level: "warn", msg, ...(sanitize(meta) ?? {}) })),
+  info: (msg, meta) =>
+    console.log(JSON.stringify({ level: "info", msg, ...(sanitize(meta) ?? {}) })),
+  warn: (msg, meta) =>
+    console.warn(JSON.stringify({ level: "warn", msg, ...(sanitize(meta) ?? {}) })),
   error: (msg, meta) =>
     console.error(JSON.stringify({ level: "error", msg, ...(sanitize(meta) ?? {}) })),
 };

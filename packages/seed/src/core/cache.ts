@@ -1,7 +1,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import type { Env } from "./types";
 import { workspaceRoot } from "./env";
+import type { Env } from "./types";
 
 interface CacheFile {
   hashes: Record<string, string>;
