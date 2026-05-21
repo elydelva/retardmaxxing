@@ -33,7 +33,7 @@ describe("usersRepo (integration, real D1)", () => {
   });
 
   it("setEmailVerified flips the timestamp", async () => {
-    const at = new Date();
+    const at = new Date(Math.floor(Date.now() / 1000) * 1000);
     await repo.setEmailVerified("u_int_1", at);
     const found = await repo.findById("u_int_1");
     expect(found?.emailVerifiedAt?.getTime()).toBe(at.getTime());

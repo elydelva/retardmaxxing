@@ -43,6 +43,7 @@
     "cypress": "catalog:testing",
     "happy-dom": "catalog:testing",
     "msw": "catalog:testing",
+    "undici": "^7.0.0",
     "vitest": "catalog:testing",
     "@tailwindcss/postcss": "catalog:frontend",
     "@tailwindcss/vite": "catalog:frontend",
