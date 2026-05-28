@@ -19,6 +19,7 @@ export interface UsersRepo {
   insertSession(values: { id: string; userId: string; expiresAt: Date }): Promise<void>;
   deleteSession(id: string): Promise<void>;
   setEmailVerified(userId: string, at: Date): Promise<void>;
+  updatePhoneNumber(userId: string, phoneNumber: string | null): Promise<void>;
 }
 
 export function createUsersRepo({ db }: { db: Database }): UsersRepo {
@@ -55,6 +56,12 @@ export function createUsersRepo({ db }: { db: Database }): UsersRepo {
       await db
         .update(users)
         .set({ emailVerifiedAt: at, updatedAt: new Date() })
+        .where(eq(users.id, userId));
+    },
+    async updatePhoneNumber(userId, phoneNumber) {
+      await db
+        .update(users)
+        .set({ phoneNumber, updatedAt: new Date() })
         .where(eq(users.id, userId));
     },
   };

@@ -4,6 +4,7 @@ import {
   renderTemplate,
   sendExpoPush,
   sendResendEmail,
+  sendTwilioSms,
 } from "@retardmaxxing/notifications";
 import type { AppBindings } from "../../lib/bindings";
 import type { Logger } from "../../lib/logger";
@@ -115,8 +116,23 @@ export function createNotificationsService(deps: NotificationsServiceDeps): Noti
         env.TWILIO_AUTH_TOKEN &&
         env.TWILIO_FROM
       ) {
-        // Requires user phone — extend users schema later. Skip for now.
-        logger.info("notifications.sms.skipped_no_phone", { userId, kind });
+        if (user.phoneNumber) {
+          const result = await sendTwilioSms(
+            { to: user.phoneNumber, from: env.TWILIO_FROM, body: rendered.sms.body },
+            env.TWILIO_ACCOUNT_SID,
+            env.TWILIO_AUTH_TOKEN
+          );
+          await notificationsRepo.logDelivery({
+            id: `nl_${crypto.randomUUID()}`,
+            userId,
+            kind,
+            channel: "sms",
+            status: result.ok ? "sent" : "failed",
+            error: result.error,
+          });
+        } else {
+          logger.info("notifications.sms.skipped_no_phone", { userId, kind });
+        }
       }
     },
   };

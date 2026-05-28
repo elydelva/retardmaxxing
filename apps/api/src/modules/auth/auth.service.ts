@@ -1,11 +1,18 @@
 import {
+  appleClient,
   createSession,
   generateSessionToken,
   generateSigningKey,
+  googleClient,
   hashPassword,
   verifyPassword,
 } from "@retardmaxxing/auth";
-import type { AuthSessionDto, SignInInput, SignUpInput } from "@retardmaxxing/contract";
+import type {
+  AuthSessionDto,
+  SignInInput,
+  SignInWithProviderInput,
+  SignUpInput,
+} from "@retardmaxxing/contract";
 import type { Database } from "@retardmaxxing/database";
 import { TRPCError } from "@trpc/server";
 import type { AppBindings } from "../../lib/bindings";
@@ -15,6 +22,7 @@ import type { UsersRepo } from "../users/users.repo";
 export interface AuthService {
   signUp(input: SignUpInput): Promise<AuthSessionDto>;
   signIn(input: SignInInput): Promise<AuthSessionDto>;
+  signInWithProvider(input: SignInWithProviderInput): Promise<AuthSessionDto>;
 }
 
 export interface AuthServiceDeps {
@@ -25,7 +33,7 @@ export interface AuthServiceDeps {
 }
 
 export function createAuthService(deps: AuthServiceDeps): AuthService {
-  const { db, usersRepo, logger } = deps;
+  const { db, env, usersRepo, logger } = deps;
 
   async function issueSession(user: {
     id: string;
@@ -90,6 +98,97 @@ export function createAuthService(deps: AuthServiceDeps): AuthService {
       if (!ok) {
         throw new TRPCError({ code: "UNAUTHORIZED", message: "Invalid credentials" });
       }
+      return issueSession({ id: user.id, email: user.email, signingKey: user.signingKey });
+    },
+
+    async signInWithProvider({ provider, code, codeVerifier }) {
+      let providerUserId: string;
+      let email: string;
+      let name: string | null = null;
+
+      try {
+        if (provider === "google") {
+          if (!codeVerifier) {
+            throw new TRPCError({
+              code: "BAD_REQUEST",
+              message: "codeVerifier required for Google",
+            });
+          }
+          const tokens = await googleClient(env).validateAuthorizationCode(code, codeVerifier);
+          const payload = JSON.parse(atob(tokens.idToken().split(".")[1]!)) as {
+            sub: string;
+            email: string;
+            name?: string;
+          };
+          providerUserId = payload.sub;
+          email = payload.email;
+          name = payload.name ?? null;
+        } else {
+          const tokens = await appleClient(env).validateAuthorizationCode(code);
+          const payload = JSON.parse(atob(tokens.idToken().split(".")[1]!)) as {
+            sub: string;
+            email: string;
+          };
+          providerUserId = payload.sub;
+          email = payload.email;
+        }
+      } catch (err) {
+        logger.error("oauth.validateCode.failed", { provider, err: String(err) });
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "OAuth failed" });
+      }
+
+      let user = await usersRepo.findByProviderIdentity(provider, providerUserId);
+
+      if (!user) {
+        const existing = await usersRepo.findByEmail(email);
+        if (existing) {
+          await usersRepo.insertIdentity({
+            id: `id_${crypto.randomUUID()}`,
+            userId: existing.id,
+            provider,
+            providerUserId,
+          });
+          user = existing;
+        } else {
+          const userId = `u_${crypto.randomUUID()}`;
+          const signingKey = generateSigningKey();
+          const now = new Date();
+          await usersRepo.insertUser({
+            id: userId,
+            email,
+            emailVerifiedAt: now,
+            name,
+            avatarUrl: null,
+            passwordHash: null,
+            signingKey,
+            stripeCustomerId: null,
+            phoneNumber: null,
+            createdAt: now,
+            updatedAt: now,
+          });
+          await usersRepo.insertIdentity({
+            id: `id_${crypto.randomUUID()}`,
+            userId,
+            provider,
+            providerUserId,
+          });
+          user = {
+            id: userId,
+            email,
+            emailVerifiedAt: now,
+            name,
+            avatarUrl: null,
+            passwordHash: null,
+            signingKey,
+            stripeCustomerId: null,
+            phoneNumber: null,
+            createdAt: now,
+            updatedAt: now,
+          };
+        }
+        logger.info("oauth.user.upserted", { provider, userId: user.id });
+      }
+
       return issueSession({ id: user.id, email: user.email, signingKey: user.signingKey });
     },
   };

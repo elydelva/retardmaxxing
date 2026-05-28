@@ -38,6 +38,7 @@ export const users = sqliteTable("users", {
   passwordHash: text("password_hash"),
   signingKey: text("signing_key").notNull(),
   stripeCustomerId: text("stripe_customer_id").unique(),
+  phoneNumber: text("phone_number"),
   createdAt: integer("created_at", { mode: "timestamp" })
     .notNull()
     .$defaultFn(() => new Date()),

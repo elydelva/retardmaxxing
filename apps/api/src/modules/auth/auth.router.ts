@@ -1,4 +1,4 @@
-import { SignInInput, SignUpInput } from "@retardmaxxing/contract";
+import { SignInInput, SignInWithProviderInput, SignUpInput } from "@retardmaxxing/contract";
 import { z } from "zod";
 import { protectedProcedure, publicProcedure, router } from "../../trpc/context";
 
@@ -10,6 +10,10 @@ export const authRouter = router({
   signIn: publicProcedure
     .input(SignInInput)
     .mutation(({ ctx, input }) => ctx.cradle.authService.signIn(input)),
+
+  signInWithProvider: publicProcedure
+    .input(SignInWithProviderInput)
+    .mutation(({ ctx, input }) => ctx.cradle.authService.signInWithProvider(input)),
 
   me: protectedProcedure.query(({ ctx }) => ({ userId: ctx.userId })),
 
