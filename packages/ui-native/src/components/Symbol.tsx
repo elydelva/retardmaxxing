@@ -1,10 +1,10 @@
 import { SymbolView, type SymbolViewProps } from "expo-symbols";
-import { Platform } from "react-native";
+import { type ColorValue, Platform } from "react-native";
 
 export interface SymbolProps {
   name: SymbolViewProps["name"];
   size?: number;
-  tintColor?: string;
+  tintColor?: ColorValue;
   fallback?: React.ReactNode;
 }
 

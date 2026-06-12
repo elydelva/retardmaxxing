@@ -7,14 +7,17 @@ projects:
   mobile: "apps/mobile"
   storybook: "apps/storybook"
   auth: "packages/auth"
+  billing: "packages/billing"
   config: "packages/config"
   contract: "packages/contract"
   database: "packages/database"
   domains: "packages/domains"
   emails: "packages/emails"
   i18n: "packages/i18n"
+  notifications: "packages/notifications"
   seed: "packages/seed"
   ui: "packages/ui"
+  ui-native: "packages/ui-native"
 
 vcs:
   client: git

@@ -1,7 +1,6 @@
 {
   "extends": "@retardmaxxing/config/tsconfig.web.json",
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },

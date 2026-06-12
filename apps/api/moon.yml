@@ -1,0 +1,6 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+tasks:
+  dev:
+    command: "bunx wrangler dev --persist-to ../../.wrangler/state"
+    preset: "server"

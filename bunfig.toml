@@ -1,7 +1,7 @@
 [install]
 exact = true
 registry = "https://registry.npmjs.org/"
-linker = "isolated"
+linker = "hoisted"
 
 [install.cache]
 disable = false

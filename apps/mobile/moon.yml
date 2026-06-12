@@ -1,0 +1,8 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+tasks:
+  dev:
+    command: "bunx expo start --dev-client"
+    preset: "server"
+    options:
+      interactive: true

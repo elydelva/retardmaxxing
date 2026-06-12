@@ -1,0 +1,6 @@
+$schema: "https://moonrepo.dev/schemas/project.json"
+
+tasks:
+  dev:
+    command: "bunx storybook dev -p 6006"
+    preset: "server"
